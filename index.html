@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuDherapy | v4.9 Optimized</title>
+    <title>AuDherapy | v5.1 Full Clinical</title>
     <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f43e.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -14,7 +14,7 @@
             --state-pink: #FF66CC; --pain-orange: #FF8C00;
         }
 
-        body { background-color: var(--bg-dark); color: var(--text-green); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; overflow-x: hidden; }
+        body { background-color: var(--bg-dark); color: var(--text-green); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
         .app-container { width: 100%; max-width: 450px; padding-bottom: 80px; }
         .card { background-color: var(--panel-purple); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--accent-purple); }
 
@@ -25,13 +25,19 @@
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .grid-10 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 5px; }
 
         button { background-color: var(--accent-purple); color: var(--text-green); border: 1px solid var(--text-green); padding: 16px 5px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.1s; }
         button:active { background-color: var(--text-green); color: var(--bg-dark); }
 
         .btn-meltdown { width: 100%; background-color: var(--danger-red); color: white; border: none; margin-top: 15px; font-size: 20px; padding: 22px; text-transform: uppercase; border-radius: 12px; }
-
-        /* PIN PAD STYLING */
+        .btn-mood { background: transparent; border: 1px solid var(--mood-color); color: var(--mood-color); font-size: 22px; padding: 20px 5px; }
+        .btn-pain { background: transparent; border: 1px solid var(--pain-orange); color: var(--pain-orange); font-size: 16px; padding: 12px 2px; }
+        
+        .flex-btn-group { display: flex; gap: 5px; width: 100%; }
+        .main-btn { flex-grow: 1; padding: 14px 4px; font-size: 12px; }
+        .btn-del { width: 35px; background: rgba(255, 51, 102, 0.1); border-color: var(--danger-red); color: var(--danger-red); flex-shrink: 0; }
+        
         #pinScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
         .pin-display { font-size: 30px; letter-spacing: 15px; margin-bottom: 30px; color: var(--text-green); min-height: 40px;}
         .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 280px; }
@@ -40,7 +46,10 @@
         .quick-log-bar { background: #2d2d2d; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; border: 1px solid var(--morning-gold); }
         .quick-log-bar input { flex: 1; background: #1a1a1a; color: white; border: none; padding: 10px; border-radius: 5px; outline: none; }
 
-        canvas { max-height: 220px; margin-bottom: 40px; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 6, 11, 0.98); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: var(--panel-purple); border: 2px solid var(--danger-red); border-radius: 12px; padding: 20px; width: 100%; max-width: 400px; }
+        
+        canvas { max-height: 200px; margin-bottom: 30px; }
         #toast { visibility: hidden; min-width: 250px; background: var(--text-green); color: var(--bg-dark); text-align: center; border-radius: 30px; padding: 12px; position: fixed; z-index: 2000; left: 50%; bottom: 30px; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
@@ -50,56 +59,95 @@
 <body>
 
     <div id="pinScreen">
-        <h2 id="pinPrompt" style="color: var(--text-green);">ENTER PIN</h2>
+        <h2 id="pinPrompt">ENTER PIN</h2>
         <div class="pin-display" id="pinInputDisplay"></div>
         <div class="pin-pad">
-            <button class="pin-btn" onclick="pressPin(1)">1</button>
-            <button class="pin-btn" onclick="pressPin(2)">2</button>
-            <button class="pin-btn" onclick="pressPin(3)">3</button>
-            <button class="pin-btn" onclick="pressPin(4)">4</button>
-            <button class="pin-btn" onclick="pressPin(5)">5</button>
-            <button class="pin-btn" onclick="pressPin(6)">6</button>
-            <button class="pin-btn" onclick="pressPin(7)">7</button>
-            <button class="pin-btn" onclick="pressPin(8)">8</button>
-            <button class="pin-btn" onclick="pressPin(9)">9</button>
-            <button class="pin-btn" style="border:none; background:transparent;"></button>
-            <button class="pin-btn" onclick="pressPin(0)">0</button>
+            <button class="pin-btn" onclick="pressPin(1)">1</button><button class="pin-btn" onclick="pressPin(2)">2</button><button class="pin-btn" onclick="pressPin(3)">3</button>
+            <button class="pin-btn" onclick="pressPin(4)">4</button><button class="pin-btn" onclick="pressPin(5)">5</button><button class="pin-btn" onclick="pressPin(6)">6</button>
+            <button class="pin-btn" onclick="pressPin(7)">7</button><button class="pin-btn" onclick="pressPin(8)">8</button><button class="pin-btn" onclick="pressPin(9)">9</button>
+            <button class="pin-btn" style="background:transparent; border:none;"></button><button class="pin-btn" onclick="pressPin(0)">0</button>
             <button class="pin-btn" style="border-color: var(--danger-red); color: var(--danger-red);" onclick="clearPinInput()">X</button>
         </div>
     </div>
 
     <div class="app-container" id="dashboard" style="display:none;">
-        <h1>AuDherapy <span onclick="toggleView('settings')" style="font-size: 20px;">⚙️</span></h1>
-        <div class="streak-container" id="stabilityStreak">STREAK: CALCULATING...</div>
+        <h1>AuDherapy 
+            <div style="display:flex; gap:15px; font-size:20px;">
+                <span id="editToggleBtn" onclick="toggleEditMode()">✏️</span>
+                <span onclick="toggleView('settings')">⚙️</span>
+            </div>
+        </h1>
+        <div class="streak-container" id="stabilityStreak">STABILITY STREAK: CALC...</div>
 
-        <div class="card" style="border-left-color: var(--state-pink);">
-            <h2>System State</h2>
-            <div class="grid-2" id="stateGrid"></div>
+        <div class="card" style="border-left-color: var(--mood-color);">
+            <h2>Capacity & Pain</h2>
+            <div class="grid-5">
+                <button class="btn-mood" onclick="log('Mood', 'Capacity', 1)">1</button>
+                <button class="btn-mood" onclick="log('Mood', 'Capacity', 2)">2</button>
+                <button class="btn-mood" onclick="log('Mood', 'Capacity', 3)">3</button>
+                <button class="btn-mood" onclick="log('Mood', 'Capacity', 4)">4</button>
+                <button class="btn-mood" onclick="log('Mood', 'Capacity', 5)">5</button>
+            </div>
+            <div class="grid-10">
+                <button class="btn-pain" onclick="log('Pain', 'Level', 1)">1</button><button class="btn-pain" onclick="log('Pain', 'Level', 2)">2</button>
+                <button class="btn-pain" onclick="log('Pain', 'Level', 3)">3</button><button class="btn-pain" onclick="log('Pain', 'Level', 4)">4</button>
+                <button class="btn-pain" onclick="log('Pain', 'Level', 5)">5</button><button class="btn-pain" onclick="log('Pain', 'Level', 6)">6</button>
+                <button class="btn-pain" onclick="log('Pain', 'Level', 7)">7</button><button class="btn-pain" onclick="log('Pain', 'Level', 8)">8</button>
+                <button class="btn-pain" onclick="log('Pain', 'Level', 9)">9</button><button class="btn-pain" onclick="log('Pain', 'Level', 10)">10</button>
+            </div>
         </div>
 
         <div class="card" style="border-left-color: var(--morning-gold);">
             <h2>Medication Quick-Log</h2>
             <div class="quick-log-bar">
-                <input type="text" id="quickMedInput" placeholder="Advil, Gummy, etc...">
-                <button onclick="logQuickEntry()" style="background: var(--morning-gold); color: #000; border: none; padding: 0 15px;">➕</button>
+                <input type="text" id="quickMedInput" placeholder="Quick log med/dose...">
+                <button onclick="logQuickEntry()" style="background:var(--morning-gold); color:#000; border:none; padding:0 15px;">➕</button>
             </div>
             <div class="grid-2" id="medsGrid"></div>
         </div>
 
-        <button class="btn-meltdown" onclick="alert('Crisis Logged')">⚠️ EMERGENCY</button>
-        <button class="btn-meltdown" style="background: var(--night-blue);" onclick="toggleView('analytics')">📊 VIEW TRENDS</button>
+        <div class="card" style="border-left-color: var(--state-pink);"><h2>System State</h2><div class="grid-2" id="stateGrid"></div></div>
+        <div class="card" style="border-left-color: var(--night-blue);"><h2>Sensory Log</h2><div class="grid-2" id="sensoryGrid"></div></div>
+        <div class="card" style="border-left-color: var(--text-green);"><h2>Maintenance</h2><div class="grid-2" id="maintenanceGrid"></div></div>
+
+        <button class="btn-meltdown" onclick="openModal()">⚠️ LOG CRISIS</button>
+        <div class="grid-2">
+            <button style="margin-top:15px;" onclick="toggleView('analytics')">📊 TRENDS</button>
+            <button style="margin-top:15px;" onclick="toggleView('vault')">📂 VAULT</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="meltdownModal">
+        <div class="modal-content">
+            <h2 style="color:var(--danger-red);">Crisis Analysis</h2>
+            <div class="grid-2"><button onclick="logCrisis('Shutdown')">Shutdown</button><button onclick="logCrisis('Meltdown')">Meltdown</button></div>
+            <h2 style="margin-top:20px;">Reboot Protocol</h2>
+            <div class="grid-2">
+                <button onclick="log('Reboot', 'Danny Scent')">Danny Scent</button>
+                <button onclick="log('Reboot', 'Thunder Noise')">Thunder Noise</button>
+            </div>
+            <button style="width:100%; margin-top:20px;" onclick="closeModal()">CLOSE</button>
+        </div>
     </div>
 
     <div class="app-container" id="analytics" style="display:none;">
-        <h1>ANALYTICS</h1>
-        <div class="card">
-            <h2>Daily System States</h2>
-            <canvas id="stateChart"></canvas>
-            
-            <h2>Medication Compliance</h2>
-            <canvas id="medChart"></canvas>
-        </div>
-        <button class="btn-meltdown" onclick="toggleView('dashboard')">🔙 BACK</button>
+        <h1>Analytics</h1>
+        <div class="card"><h2>Daily States</h2><canvas id="stateChart"></canvas></div>
+        <div class="card"><h2>Pain Trend</h2><canvas id="painChart"></canvas></div>
+        <button style="width:100%;" onclick="toggleView('dashboard')">🔙 BACK</button>
+    </div>
+
+    <div class="app-container" id="vault" style="display:none;">
+        <h1>Vault</h1>
+        <div class="grid-2"><button onclick="exportClinicalCSV()">📥 CSV</button><button onclick="exportJSON()">📥 JSON</button></div>
+        <div id="logList" style="margin-top:20px; font-size:11px; color:var(--text-muted);"></div>
+        <button style="width:100%; margin-top:20px;" onclick="toggleView('dashboard')">🔙 BACK</button>
+    </div>
+
+    <div class="app-container" id="settings" style="display:none;">
+        <h1>Settings</h1>
+        <button style="width:100%; margin-bottom:10px;" onclick="localStorage.removeItem('userMasterPin'); location.reload();">🔓 RESET PIN</button>
+        <button style="width:100%;" onclick="toggleView('dashboard')">🔙 BACK</button>
     </div>
 
     <div id="toast">Logged!</div>
@@ -108,108 +156,108 @@
         let db = JSON.parse(localStorage.getItem('audherapy_db')) || [];
         let savedPin = localStorage.getItem('userMasterPin');
         let currentPinInput = "";
+        let editMode = false;
         let charts = {};
 
-        // INITIALIZE
-        window.onload = function() {
-            if (!savedPin) {
-                document.getElementById('pinPrompt').innerText = "CREATE MASTER PIN";
-            }
-            renderGrids();
+        const defaultConfigs = {
+            maintenance: [{label: '💧 Water', item: 'Water'}, {label: '🪥 Teeth', item: 'Teeth'}],
+            state: [{label: '🌀 Flow', item: 'Flow'}, {label: '⚪ Neutral', item: 'Neutral'}],
+            sensory: [{label: '🔊 Noise', item: 'Noise'}, {label: '🔆 Light', item: 'Light'}],
+            meds: [{label: '🌅 Morning', item: 'Morning'}, {label: '😶‍🌫️ Indica', item: 'Indica'}]
+        };
+        let appConfig = JSON.parse(localStorage.getItem('audherapy_config')) || defaultConfigs;
+
+        window.onload = () => {
+            if(!savedPin) document.getElementById('pinPrompt').innerText = "CREATE PIN";
+            renderAllGrids();
             updateStreak();
         };
 
-        // PIN PAD LOGIC
-        function pressPin(num) {
-            if (currentPinInput.length < 4) {
-                currentPinInput += num;
+        function pressPin(n) {
+            if(currentPinInput.length < 4) {
+                currentPinInput += n;
                 document.getElementById('pinInputDisplay').innerText = "* ".repeat(currentPinInput.length);
             }
-            if (currentPinInput.length === 4) {
-                if (!savedPin) {
-                    localStorage.setItem('userMasterPin', currentPinInput);
-                    savedPin = currentPinInput;
-                    alert("PIN Set Successfully!");
-                    location.reload();
-                } else if (currentPinInput === savedPin) {
-                    document.getElementById('pinScreen').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
-                } else {
-                    document.getElementById('pinInputDisplay').innerText = "ERROR";
-                    setTimeout(clearPinInput, 1000);
-                }
+            if(currentPinInput.length === 4) {
+                if(!savedPin) { localStorage.setItem('userMasterPin', currentPinInput); location.reload(); }
+                else if(currentPinInput === savedPin) { document.getElementById('pinScreen').style.display='none'; document.getElementById('dashboard').style.display='block'; }
+                else { document.getElementById('pinInputDisplay').innerText="ERROR"; setTimeout(clearPinInput, 1000); }
             }
         }
+        function clearPinInput() { currentPinInput = ""; document.getElementById('pinInputDisplay').innerText = ""; }
 
-        function clearPinInput() {
-            currentPinInput = "";
-            document.getElementById('pinInputDisplay').innerText = "";
-        }
-
-        // LOGGING
         function log(cat, item, val = null, note = "") {
-            db.push({ timestamp: Date.now(), date: new Date().toLocaleDateString(), category: cat, item: item, note: note });
+            db.push({ timestamp: Date.now(), date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString(), category: cat, item: item, value: val, note: note });
             localStorage.setItem('audherapy_db', JSON.stringify(db));
             showToast("Logged!");
             updateStreak();
         }
 
         function logQuickEntry() {
-            const val = document.getElementById('quickMedInput').value;
-            if (!val) return;
-            log('Meds', 'Quick Entry', null, val);
+            const v = document.getElementById('quickMedInput').value;
+            if(!v) return;
+            log('Meds', 'Quick Entry', null, v);
             document.getElementById('quickMedInput').value = "";
         }
 
-        function renderGrids() {
-            const states = ['Flow State', 'Neutral', 'Exec Dysfunc', 'Inner Unrest'];
-            document.getElementById('stateGrid').innerHTML = states.map(s => `<button onclick="log('State', '${s}')">${s}</button>`).join('');
-            
-            const meds = ['Morning Meds', 'Evening Meds', 'Night Meds', 'Indica Gummy'];
-            document.getElementById('medsGrid').innerHTML = meds.map(m => `<button style="border-color: var(--morning-gold);" onclick="log('Meds', '${m}')">${m}</button>`).join('');
+        function renderAllGrids() {
+            renderGrid('maintenance', 'maintenanceGrid');
+            renderGrid('state', 'stateGrid');
+            renderGrid('sensory', 'sensoryGrid');
+            renderGrid('meds', 'medsGrid');
         }
+
+        function renderGrid(sec, id) {
+            const g = document.getElementById(id);
+            g.innerHTML = appConfig[sec].map((b, i) => `
+                <div class="flex-btn-group">
+                    ${editMode ? `<button class="btn-del" onclick="deleteBtn('${sec}', ${i})">❌</button>` : ''}
+                    <button class="main-btn" onclick="log('${sec}', '${b.item}')">${b.label}</button>
+                </div>
+            `).join('') + (editMode ? `<button style="grid-column: span 2;" onclick="addBtn('${sec}')">+ ADD</button>` : '');
+        }
+
+        function addBtn(sec) {
+            const l = prompt("Label:"); const i = prompt("Item ID:");
+            if(l && i) { appConfig[sec].push({label: l, item: i}); localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); renderAllGrids(); }
+        }
+        function deleteBtn(sec, i) { appConfig[sec].splice(i, 1); localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); renderAllGrids(); }
+        function toggleEditMode() { editMode = !editMode; document.getElementById('editToggleBtn').classList.toggle('edit-active', editMode); renderAllGrids(); }
 
         function updateStreak() {
-            const streakEl = document.getElementById('stabilityStreak');
-            streakEl.innerText = "STABILITY STREAK: ACTIVE";
+            const s = document.getElementById('stabilityStreak');
+            const c = db.filter(d => d.category === 'Crisis');
+            if(!c.length) { s.innerText = "STREAK: INITIALIZING"; return; }
+            const diff = Date.now() - Math.max(...c.map(x => x.timestamp));
+            s.innerText = `STREAK: ${Math.floor(diff / 864e5)}D ${Math.floor((diff/36e5)%24)}H`;
         }
 
-        function toggleView(view) {
-            document.getElementById('dashboard').style.display = view === 'dashboard' ? 'block' : 'none';
-            document.getElementById('analytics').style.display = view === 'analytics' ? 'block' : 'none';
-            if (view === 'analytics') drawCharts();
+        function toggleView(v) {
+            ['dashboard', 'analytics', 'vault', 'settings'].forEach(x => document.getElementById(x).style.display = x === v ? 'block' : 'none');
+            if(v === 'analytics') drawCharts();
+            if(v === 'vault') renderLogs();
         }
 
         function drawCharts() {
-            const today = new Date().toLocaleDateString();
-            const todayLogs = db.filter(l => l.date === today);
-
-            // Dynamic State Pie Chart
-            const stateData = {};
-            todayLogs.filter(l => l.category === 'State').forEach(l => stateData[l.item] = (stateData[l.item] || 0) + 1);
-            
-            renderChart('stateChart', 'pie', Object.keys(stateData), Object.values(stateData), ['#FF66CC', '#00FF66', '#4A90E2', '#FFD700']);
+            const t = new Date().toLocaleDateString();
+            const l = db.filter(d => d.date === t);
+            const sd = {}; l.filter(x => x.category === 'state').forEach(x => sd[x.item] = (sd[x.item] || 0) + 1);
+            if(charts['stateChart']) charts['stateChart'].destroy();
+            charts['stateChart'] = new Chart(document.getElementById('stateChart'), { type: 'pie', data: { labels: Object.keys(sd), datasets: [{ data: Object.values(sd), backgroundColor: ['#FF66CC', '#00FF66', '#4A90E2', '#FFD700'] }] }});
         }
 
-        function renderChart(id, type, labels, data, colors) {
-            if (charts[id]) charts[id].destroy();
-            charts[id] = new Chart(document.getElementById(id), {
-                type: type,
-                data: { labels: labels, datasets: [{ data: data, backgroundColor: colors }] },
-                options: { plugins: { legend: { labels: { color: '#fff' } } } }
-            });
+        function exportClinicalCSV() {
+            let c = "Date,Time,Cat,Item,Note\n";
+            db.forEach(r => c += `${r.date},${r.time},${r.category},${r.item},${r.note}\n`);
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([c], {type:'text/csv'})); a.download = 'AuDherapy.csv'; a.click();
         }
-
-        function showToast(m) {
-            const t = document.getElementById("toast");
-            t.innerText = m; t.className = "show";
-            setTimeout(() => t.className = "", 3000);
-        }
-
-        // PWA AUTO LOCK
-        document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === 'hidden') location.reload();
-        });
+        function exportJSON() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(db)], {type:'text/json'})); a.download = 'backup.json'; a.click(); }
+        function renderLogs() { document.getElementById('logList').innerHTML = db.slice().reverse().map(l => `<div>[${l.date}] ${l.item} ${l.note}</div>`).join(''); }
+        function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
+        function openModal() { document.getElementById('meltdownModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('meltdownModal').style.display = 'none'; }
+        function logCrisis(t) { const n = prompt("Trigger?"); log('Crisis', t, null, n); closeModal(); }
+        document.addEventListener("visibilitychange", () => { if(document.visibilityState === 'hidden' && savedPin) location.reload(); });
     </script>
 </body>
 </html>
