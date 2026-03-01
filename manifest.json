@@ -1,8 +1,17 @@
-"icons": [
+{
+  "name": "AuDherapy",
+  "short_name": "AuDherapy",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#09060B",
+  "theme_color": "#1A1124",
+  "description": "Forensic Tracking & System Regulation",
+  "icons": [
     {
       "src": "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f43e.png",
       "sizes": "72x72",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f43e.png",
@@ -14,6 +23,7 @@
       "src": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/svg/1f43e.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "maskable any"
     }
   ]
+}
