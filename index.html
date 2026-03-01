@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuDherapy | v5.3 Color-Coded Forensic</title>
+    <title>AuDherapy | v6.13 Dynamic Grid Polish</title>
     <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f43e.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -19,39 +19,55 @@
         .app-container { width: 100%; max-width: 450px; padding-bottom: 80px; }
         .card { background-color: var(--panel-purple); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--accent-purple); }
 
-        h1 { font-size: 28px; margin-bottom: 5px; color: var(--text-green); display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-size: 28px; margin-bottom: 20px; color: var(--text-green); display: flex; justify-content: space-between; align-items: center; }
         h2 { font-size: 14px; margin-top: 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .grid-10 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 5px; }
 
-        button { background-color: var(--accent-purple); color: var(--text-green); border: 1px solid var(--text-green); padding: 14px 5px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        button { background-color: var(--accent-purple); color: var(--text-green); border: 1px solid var(--text-green); padding: 14px 5px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.1s; }
+        button:active { background: var(--text-green); color: #000; }
         
         .btn-mood { background: transparent; border: 1px solid var(--mood-color); color: var(--mood-color); font-size: 22px; padding: 18px 5px; }
         .btn-pain { background: transparent; border: 1px solid var(--pain-orange); color: var(--pain-orange); font-size: 16px; padding: 10px 2px; }
         
-        .flex-btn-group { display: flex; gap: 5px; width: 100%; margin-bottom: 5px; }
+        .flex-btn-group { display: flex; gap: 5px; width: 100%; margin-bottom: 8px; align-items: stretch; }
         .main-btn { flex-grow: 1; font-size: 12px; border-color: inherit; color: inherit; }
-        .btn-info { width: 35px; background: transparent; border-color: var(--text-muted); color: var(--text-muted); flex-shrink: 0; font-family: serif; }
-        .btn-del { width: 35px; background: rgba(255, 51, 102, 0.1); border-color: var(--danger-red); color: var(--danger-red); flex-shrink: 0; }
+        .btn-info { width: 35px; background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); flex-shrink: 0; font-family: serif; font-size: 16px; }
+        .btn-del { width: 35px; background: rgba(255, 51, 102, 0.1); border: 1px solid var(--danger-red); color: var(--danger-red); flex-shrink: 0; }
 
         .quick-log-bar { background: #2d2d2d; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; border: 1px solid var(--morning-gold); }
         .quick-log-bar input { flex: 1; background: #1a1a1a; color: white; border: none; padding: 10px; border-radius: 5px; outline: none; }
 
+        .time-filters { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .filter-btn { padding: 8px 15px; font-size: 12px; border-radius: 20px; background: var(--panel-purple); color: var(--text-muted); border: 1px solid var(--accent-purple); }
+        .filter-active { background: var(--text-green); color: black; border-color: var(--text-green); }
+
         #pinScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .pin-display { font-size: 30px; letter-spacing: 15px; margin-bottom: 30px; min-height: 40px; }
-        .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .pin-display { font-size: 30px; letter-spacing: 15px; margin-bottom: 30px; min-height: 40px; color: var(--text-green); }
+        .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 250px; }
         .pin-btn { background: var(--panel-purple); border: 2px solid var(--accent-purple); width: 75px; height: 75px; border-radius: 50%; font-size: 24px; color: var(--text-green); }
 
         #toast { visibility: hidden; background: var(--text-green); color: #000; padding: 12px; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); border-radius: 30px; z-index: 10000; }
         #toast.show { visibility: visible; }
+
+        /* PREVIEW MODAL FOR STABLE PDF */
+        #printModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; color: #000; z-index: 20000; overflow-y: scroll; padding: 20px; box-sizing: border-box; }
+        @media print {
+            body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
+            .app-container, #pinScreen, #toast, .no-print { display: none !important; }
+            #printModal { display: block !important; position: static; overflow: visible; }
+            .print-card { break-inside: avoid; border-bottom: 2px solid #000; margin-bottom: 30px; padding-bottom: 20px; }
+            img { width: 100% !important; height: auto !important; }
+            h1, h2, h3 { color: black !important; text-align: left; }
+        }
     </style>
 </head>
 <body>
 
     <div id="pinScreen">
-        <h2 id="pinPrompt">ENTER PIN</h2>
+        <h2 id="pinPrompt">ENTER MASTER PIN</h2>
         <div class="pin-display" id="pinInputDisplay"></div>
         <div class="pin-pad">
             <button class="pin-btn" onclick="pressPin(1)">1</button><button class="pin-btn" onclick="pressPin(2)">2</button><button class="pin-btn" onclick="pressPin(3)">3</button>
@@ -62,9 +78,17 @@
         </div>
     </div>
 
+    <div id="printModal">
+        <div class="no-print" style="position:sticky; top:0; background:#fff; padding:10px; border-bottom:2px solid #000; display:flex; gap:10px; z-index:20001;">
+            <button onclick="window.print()" style="background:var(--text-green); color:#000; flex:2; padding:15px;">✅ CLICK TO OPEN PRINT DIALOG</button>
+            <button onclick="closePrintReport()" style="background:#eee; color:#000; flex:1;">CANCEL</button>
+        </div>
+        <h1 style="border-bottom: 2px solid #000; padding-bottom: 10px;">AuDherapy Forensic Report</h1>
+        <div id="printOutput"></div>
+    </div>
+
     <div class="app-container" id="dashboard" style="display:none;">
-        <h1 style="display:flex; justify-content:space-between;">
-            AuDherapy 
+        <h1>AuDherapy 
             <div style="font-size: 20px; display: flex; gap: 15px;">
                 <span id="editToggleBtn" onclick="toggleEditMode()">✏️</span>
                 <span onclick="toggleView('analytics')">📊</span>
@@ -74,17 +98,17 @@
         <div class="card" style="border-left-color: var(--mood-color);">
             <h2>Capacity & Pain</h2>
             <div class="grid-5">
-                <button class="btn-mood" onclick="log('Mood', 'Capacity', 1)">1</button><button class="btn-mood" onclick="log('Mood', 'Capacity', 2)">2</button><button class="btn-mood" onclick="log('Mood', 'Capacity', 3)">3</button><button class="btn-mood" onclick="log('Mood', 'Capacity', 4)">4</button><button class="btn-mood" onclick="log('Mood', 'Capacity', 5)">5</button>
+                <button class="btn-mood" onclick="logScale('Mood', 'Capacity', 1)">1</button><button class="btn-mood" onclick="logScale('Mood', 'Capacity', 2)">2</button><button class="btn-mood" onclick="logScale('Mood', 'Capacity', 3)">3</button><button class="btn-mood" onclick="logScale('Mood', 'Capacity', 4)">4</button><button class="btn-mood" onclick="logScale('Mood', 'Capacity', 5)">5</button>
             </div>
             <div class="grid-10" style="margin-top:15px;">
-                <button class="btn-pain" onclick="log('Pain', 'Level', 1)">1</button><button class="btn-pain" onclick="log('Pain', 'Level', 2)">2</button><button class="btn-pain" onclick="log('Pain', 'Level', 3)">3</button><button class="btn-pain" onclick="log('Pain', 'Level', 4)">4</button><button class="btn-pain" onclick="log('Pain', 'Level', 5)">5</button><button class="btn-pain" onclick="log('Pain', 'Level', 6)">6</button><button class="btn-pain" onclick="log('Pain', 'Level', 7)">7</button><button class="btn-pain" onclick="log('Pain', 'Level', 8)">8</button><button class="btn-pain" onclick="log('Pain', 'Level', 9)">9</button><button class="btn-pain" onclick="log('Pain', 'Level', 10)">10</button>
+                <button class="btn-pain" onclick="logScale('Pain', 'Level', 1)">1</button><button class="btn-pain" onclick="logScale('Pain', 'Level', 2)">2</button><button class="btn-pain" onclick="logScale('Pain', 'Level', 3)">3</button><button class="btn-pain" onclick="logScale('Pain', 'Level', 4)">4</button><button class="btn-pain" onclick="logScale('Pain', 'Level', 5)">5</button><button class="btn-pain" onclick="logScale('Pain', 'Level', 6)">6</button><button class="btn-pain" onclick="logScale('Pain', 'Level', 7)">7</button><button class="btn-pain" onclick="logScale('Pain', 'Level', 8)">8</button><button class="btn-pain" onclick="logScale('Pain', 'Level', 9)">9</button><button class="btn-pain" onclick="logScale('Pain', 'Level', 10)">10</button>
             </div>
         </div>
 
         <div class="card" style="border-left-color: var(--morning-gold);">
             <h2>Meds Quick-Log</h2>
             <div class="quick-log-bar">
-                <input type="text" id="quickMedInput" placeholder="Quick log med...">
+                <input type="text" id="quickMedInput" placeholder="Quick log med/dose...">
                 <button onclick="logQuickEntry()" style="background:var(--morning-gold); color:#000; border:none; padding:0 15px;">➕</button>
             </div>
             <div class="grid-2" id="medsGrid"></div>
@@ -94,13 +118,43 @@
         <div class="card" style="border-left-color: var(--night-blue);"><h2>Sensory Log</h2><div class="grid-2" id="sensoryGrid"></div></div>
         <div class="card" style="border-left-color: var(--text-green);"><h2>Maintenance</h2><div class="grid-2" id="maintenanceGrid"></div></div>
         
-        <button style="width:100%; background:var(--danger-red); color:white; padding:20px; border:none; border-radius:12px; font-weight:bold; font-size:18px;" onclick="log('Crisis', 'Emergency Call/Meltdown')">🚨 EMERGENCY</button>
+        <div id="recoveryZone" style="display:none; margin-bottom: 20px;">
+            <button style="width:100%; background:var(--morning-gold); color:#000; padding:15px; border-radius:12px; font-weight:bold; font-size:16px;" onclick="recoverButtons()">🔍 RECOVER LOST BUTTONS</button>
+        </div>
+
+        <button style="width:100%; background:var(--danger-red); color:white; padding:20px; border:none; border-radius:12px; font-weight:bold; font-size:18px;" onclick="logCrisis()">🚨 EMERGENCY</button>
+        <button style="width:100%; background:var(--accent-purple); color:var(--text-green); padding:15px; border:1px solid var(--text-green); border-radius:12px; font-weight:bold; margin-top:10px;" onclick="toggleView('vault')">📂 FORENSIC VAULT</button>
     </div>
 
     <div class="app-container" id="analytics" style="display:none;">
-        <h1>Analytics</h1>
-        <div class="card"><h2>Daily States</h2><canvas id="stateChart"></canvas></div>
+        <h1>Forensic Trends</h1>
+        <div class="time-filters">
+            <button class="filter-btn filter-active" id="btn1" onclick="setFilter(1)">Daily</button>
+            <button class="filter-btn" id="btn7" onclick="setFilter(7)">Weekly</button>
+            <button class="filter-btn" id="btn30" onclick="setFilter(30)">Monthly</button>
+        </div>
+        
+        <div class="card"><h2>Maintenance Progress</h2><canvas id="goalChart"></canvas></div>
+        <div class="card"><h2>Weight History</h2><canvas id="weightChart"></canvas></div>
+        <div class="card"><h2>Shot Tracker</h2><canvas id="shotChart"></canvas></div>
+        <div class="card"><h2>Meltdown Frequency</h2><canvas id="crisisChart"></canvas></div>
+        <div class="card"><h2>Pain History</h2><canvas id="painChart"></canvas></div>
+        <div class="card"><h2>System States</h2><canvas id="stateChart"></canvas></div>
+        <div class="card"><h2>Sensory Analysis</h2><canvas id="sensoryChart"></canvas></div>
+        <div class="card"><h2>Med Compliance</h2><canvas id="medChart"></canvas></div>
+        
+        <button onclick="prepareReport()" id="reportBtn" style="width:100%; background:var(--morning-gold); color:black; margin-bottom:10px;">📊 GENERATE MASTER REPORT</button>
         <button onclick="toggleView('dashboard')" style="width:100%;">🔙 BACK</button>
+    </div>
+
+    <div class="app-container" id="vault" style="display:none;">
+        <h1>Forensic Vault</h1>
+        <div class="grid-2">
+            <button onclick="exportClinicalCSV()">📥 CSV (SHEETS)</button>
+            <button onclick="exportJSON()">📥 JSON (BACKUP)</button>
+        </div>
+        <div id="logList" style="margin-top:20px; font-size:11px; color:var(--text-muted); overflow-y:auto; max-height:400px;"></div>
+        <button style="width:100%; margin-top:20px;" onclick="toggleView('dashboard')">🔙 BACK</button>
     </div>
 
     <div id="toast">Logged!</div>
@@ -110,41 +164,67 @@
         let savedPin = localStorage.getItem('userMasterPin');
         let currentPinInput = "";
         let editMode = false;
+        let activeFilter = 1;
         let charts = {};
 
         const defaultConfigs = {
             maintenance: [
-                {label: '💧 Water', item: 'Water', color: 'var(--text-green)'}, 
-                {label: '🪥 Teeth', item: 'Teeth', color: 'var(--text-green)'}
+                {label: '💧 Water', item: 'Water', color: '#4A90E2', desc: 'Hydration tracking (64oz)'}, 
+                {label: '🪥 Teeth', item: 'Teeth', color: '#FF3366', desc: 'Oral hygiene routine'},
+                {label: '⚖️ Weight', item: 'Weight', color: '#FFD700', desc: 'Body weight tracking'}
             ],
             state: [
-                {label: '🌀 Flow', item: 'Flow', color: 'var(--state-pink)'}, 
-                {label: '⚪ Neutral', item: 'Neutral', color: 'var(--state-pink)'},
-                {label: '🚧 Exec Dys', item: 'Exec Dys', color: 'var(--state-pink)'}
+                {label: '⚡ Hyperarousal', item: 'Hyperarousal', color: '#FF66CC', desc: 'Over-stimulated / Fight or flight mode'},
+                {label: '🧊 Hypoarousal', item: 'Hypoarousal', color: '#FF66CC', desc: 'Shut-down / Dissociation / Freeze mode'},
+                {label: '🌪️ Inner Unrest', item: 'Inner Unrest', color: '#FF66CC', desc: 'Internal tension, agitation, or restlessness'},
+                {label: '🌀 Flow', item: 'Flow', color: '#FF66CC', desc: 'Deep focus immersion'}, 
+                {label: '⚪ Neutral', item: 'Neutral', color: '#FF66CC', desc: 'Baseline state'}, 
+                {label: '🚧 Exec Dys', item: 'Exec Dys', color: '#FF66CC', desc: 'Executive dysfunction block'}
             ],
             sensory: [
-                {label: '🔊 Noise', item: 'Noise', color: 'var(--night-blue)'}, 
-                {label: '🔆 Light', item: 'Light', color: 'var(--night-blue)'}
+                {label: '🔊 Noise', item: 'Noise', color: '#4A90E2', desc: 'Auditory overstimulation'}, 
+                {label: '🔆 Light', item: 'Light', color: '#4A90E2', desc: 'Visual overstimulation'}, 
+                {label: '🧤 Touch', item: 'Touch', color: '#4A90E2', desc: 'Tactile overstimulation'}, 
+                {label: '👃 Smell', item: 'Smell', color: '#4A90E2', desc: 'Olfactory overstimulation'}
             ],
             meds: [
-                {label: '🌅 Morning', item: 'Morning', color: 'var(--morning-gold)'}, 
-                {label: '🌇 Evening', item: 'Evening', color: 'var(--evening-orange)'},
-                {label: '🌃 Night', item: 'Night', color: 'var(--night-blue)'},
-                {label: '😶‍🌫️ Indica', item: 'Indica', color: 'var(--indica-purple)'}
+                {label: '🌅 Morning', item: 'Morning', color: '#FFD700', desc: 'Morning dose'}, 
+                {label: '🌇 Evening', item: 'Evening', color: '#FF8C00', desc: 'Evening dose'}, 
+                {label: '🌃 Night', item: 'Night', color: '#4A90E2', desc: 'Nighttime dose'}, 
+                {label: '😶‍🌫️ Med Gummy', item: 'Med Gummy', color: '#A78BFA', desc: 'Medical gummy dose'},
+                {label: '💉 Shot', item: 'Shot', color: '#A78BFA', desc: 'Routine injection'}
             ]
         };
+        
         let appConfig = JSON.parse(localStorage.getItem('audherapy_config')) || defaultConfigs;
 
-        window.onload = () => {
-            if(!savedPin) document.getElementById('pinPrompt').innerText = "CREATE PIN";
-            renderAllGrids();
-        };
+        const clinicalStates = [
+            {label: '⚡ Hyperarousal', item: 'Hyperarousal', color: '#FF66CC', desc: 'Over-stimulated / Fight or flight mode'},
+            {label: '🧊 Hypoarousal', item: 'Hypoarousal', color: '#FF66CC', desc: 'Shut-down / Dissociation / Freeze mode'},
+            {label: '🌪️ Inner Unrest', item: 'Inner Unrest', color: '#FF66CC', desc: 'Internal tension, agitation, or restlessness'}
+        ];
+        
+        clinicalStates.forEach(cState => {
+            if (!appConfig.state.find(s => s.item === cState.item || s.label.includes(cState.item))) {
+                appConfig.state.unshift(cState); 
+            }
+        });
+
+        const colorFixMap = { 'var(--text-green)': '#00FF66', 'var(--danger-red)': '#FF3366', 'var(--morning-gold)': '#FFD700', 'var(--evening-orange)': '#FF8C00', 'var(--night-blue)': '#4A90E2', 'var(--state-pink)': '#FF66CC', 'var(--indica-purple)': '#A78BFA' };
+        Object.keys(appConfig).forEach(category => {
+            appConfig[category].forEach(item => {
+                if(!item.desc) item.desc = item.label;
+                if(colorFixMap[item.color]) item.color = colorFixMap[item.color];
+                if(item.item === 'Teeth' && item.color === '#00FF66') item.color = '#FF3366'; 
+                if(item.item === 'Weight' && item.color === '#00FF66') item.color = '#FFD700'; 
+            });
+        });
+        localStorage.setItem('audherapy_config', JSON.stringify(appConfig));
+
+        window.onload = () => { if(!savedPin) document.getElementById('pinPrompt').innerText = "CREATE PIN"; renderAllGrids(); };
 
         function pressPin(n) {
-            if(currentPinInput.length < 4) {
-                currentPinInput += n;
-                document.getElementById('pinInputDisplay').innerText = "* ".repeat(currentPinInput.length);
-            }
+            if(currentPinInput.length < 4) { currentPinInput += n; document.getElementById('pinInputDisplay').innerText = "* ".repeat(currentPinInput.length); }
             if(currentPinInput.length === 4) {
                 if(!savedPin) { localStorage.setItem('userMasterPin', currentPinInput); location.reload(); }
                 else if(currentPinInput === savedPin) { document.getElementById('pinScreen').style.display='none'; document.getElementById('dashboard').style.display='block'; }
@@ -154,55 +234,177 @@
         function clearPinInput() { currentPinInput = ""; document.getElementById('pinInputDisplay').innerText = ""; }
 
         function log(cat, item, val = null, note = "") {
-            db.push({ timestamp: Date.now(), date: new Date().toLocaleDateString(), category: cat, item: item, value: val, note: note });
+            db.push({ timestamp: Date.now(), date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString(), category: cat, item: item, value: val, note: note });
             localStorage.setItem('audherapy_db', JSON.stringify(db));
             showToast("Logged!");
         }
 
-        function logQuickEntry() {
-            const v = document.getElementById('quickMedInput').value;
-            if(!v) return;
-            log('Meds', 'Quick Entry', null, v);
-            document.getElementById('quickMedInput').value = "";
+        function handleLog(sec, item) {
+            if (item === 'Weight') {
+                const w = prompt("Enter current weight (lbs):");
+                if (w !== null && w.trim() !== "") log(sec, item, parseFloat(w));
+            } else if (item === 'Shot') {
+                let conf = appConfig[sec].find(x => x.item === item);
+                if (conf && !conf.freq) {
+                    conf.freq = prompt("How often do you take this shot? (e.g., Weekly, Monthly)");
+                    localStorage.setItem('audherapy_config', JSON.stringify(appConfig));
+                }
+                const note = conf && conf.freq ? `Freq: ${conf.freq}` : "";
+                log(sec, item, 1, note);
+            } else {
+                log(sec, item);
+            }
         }
 
-        function renderAllGrids() {
-            renderGrid('maintenance', 'maintenanceGrid');
-            renderGrid('state', 'stateGrid');
-            renderGrid('sensory', 'sensoryGrid');
-            renderGrid('meds', 'medsGrid');
-        }
+        function logScale(cat, item, val) { const n = prompt(cat === 'Pain' ? "Type/Location of pain?" : "What is impacting capacity?"); if(n!==null) log(cat, item, val, n); }
+        function logQuickEntry() { const v = document.getElementById('quickMedInput').value; if(v) { log('Meds', 'Quick Entry', null, v); document.getElementById('quickMedInput').value = ""; } }
+        function logCrisis() { const n = prompt("What triggered this meltdown?"); log('Crisis', 'Emergency', null, n); }
 
+        function renderAllGrids() { ['maintenance', 'state', 'sensory', 'meds'].forEach(s => renderGrid(s, s + 'Grid')); }
         function renderGrid(sec, id) {
             const g = document.getElementById(id);
-            g.innerHTML = appConfig[sec].map((b, i) => `
-                <div class="flex-btn-group" style="color: ${b.color || 'var(--text-green)'}; border-color: ${b.color || 'var(--text-green)'};">
+            g.innerHTML = appConfig[sec].map((b, i, arr) => {
+                // Determine if this is the final odd item to stretch its width across two columns
+                const isOddLast = (i === arr.length - 1) && (arr.length % 2 !== 0);
+                return `
+                <div class="flex-btn-group" style="color: ${b.color}; border-color: ${b.color}; ${isOddLast ? 'grid-column: span 2;' : ''}">
                     ${editMode ? `<button class="btn-del" onclick="deleteBtn('${sec}', ${i})">❌</button>` : ''}
-                    <button class="main-btn" onclick="log('${sec}', '${b.item}')">${b.label}</button>
-                    ${b.desc ? `<button class="btn-info" onclick="alert('${b.desc}')">i</button>` : ''}
+                    <button class="main-btn" onclick="handleLog('${sec}', '${b.item}')">${b.label}</button>
+                    <button class="btn-info" onclick="alert('${b.desc || b.label}')">i</button>
                 </div>
-            `).join('') + (editMode ? `<button style="grid-column: span 2; color:white; border-color:white;" onclick="addBtn('${sec}')">+ ADD ITEM</button>` : '');
+            `}).join('') + (editMode ? `<button style="grid-column: span 2; color:white; border-color:white;" onclick="addBtn('${sec}')">+ ADD ITEM</button>` : '');
         }
 
         function addBtn(sec) {
-            const l = prompt("Label (e.g. 💊 Vyvanse):"); 
-            const i = prompt("Short ID (for stats):"); 
-            const d = prompt("Literal Definition (optional):");
-            const c = prompt("Hex Color (optional, e.g. #FF0000):");
-            if(l && i) { 
-                appConfig[sec].push({label: l, item: i, desc: d, color: c}); 
-                localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); 
-                renderAllGrids(); 
+            const l = prompt("Label:"); const i = prompt("Short ID:"); const c = prompt("Hex Color:"); const d = prompt("Definition:");
+            if(l && i) { appConfig[sec].push({label: l, item: i, color: c || 'var(--text-green)', desc: d}); localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); renderAllGrids(); }
+        }
+        function deleteBtn(sec, i) { if(confirm("Delete item?")) { appConfig[sec].splice(i, 1); localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); renderAllGrids(); } }
+        
+        function toggleEditMode() { 
+            editMode = !editMode; 
+            document.getElementById('editToggleBtn').style.color = editMode ? 'var(--danger-red)' : 'var(--text-muted)'; 
+            document.getElementById('recoveryZone').style.display = editMode ? 'block' : 'none';
+            renderAllGrids(); 
+        }
+
+        function recoverButtons() {
+            let added = 0;
+            let known = new Set();
+            Object.values(appConfig).forEach(arr => arr.forEach(b => known.add(b.item)));
+            
+            db.forEach(log => {
+                let cMap = {'Maintenance':'maintenance', 'State':'state', 'Sensory':'sensory', 'Meds':'meds'};
+                let target = cMap[log.category];
+                
+                if (target && !known.has(log.item) && log.item !== 'Quick Entry') {
+                    appConfig[target].push({
+                        label: '✨ ' + log.item,
+                        item: log.item,
+                        color: '#A199AB',
+                        desc: 'Recovered from Forensic Vault'
+                    });
+                    known.add(log.item);
+                    added++;
+                }
+            });
+            
+            if(added > 0) {
+                localStorage.setItem('audherapy_config', JSON.stringify(appConfig));
+                renderAllGrids();
+                alert(`Forensic Recovery Complete! Found and restored ${added} missing buttons.`);
+            } else {
+                alert("Vault scan complete. No missing buttons found.");
             }
         }
-        function deleteBtn(sec, i) { if(confirm("Delete?")) { appConfig[sec].splice(i, 1); localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); renderAllGrids(); } }
-        function toggleEditMode() { editMode = !editMode; document.getElementById('editToggleBtn').style.color = editMode ? 'var(--danger-red)' : 'var(--text-muted)'; renderAllGrids(); }
-        function toggleView(v) { document.getElementById('dashboard').style.display = v==='dashboard'?'block':'none'; document.getElementById('analytics').style.display = v==='analytics'?'block':'none'; if(v==='analytics') drawCharts(); }
-        function drawCharts() {
-            const d = {}; db.filter(x => x.date === new Date().toLocaleDateString() && x.category === 'state').forEach(x => d[x.item] = (d[x.item] || 0) + 1);
-            if(charts['stateChart']) charts['stateChart'].destroy();
-            charts['stateChart'] = new Chart(document.getElementById('stateChart'), { type: 'pie', data: { labels: Object.keys(d), datasets: [{ data: Object.values(d), backgroundColor: ['#FF66CC', '#00FF66', '#4A90E2', '#FFD700'] }] }});
+
+        function toggleView(v) { ['dashboard', 'analytics', 'vault'].forEach(x => document.getElementById(x).style.display = x === v ? 'block' : 'none'); if(v==='analytics') drawCharts(); if(v==='vault') renderLogs(); }
+        function setFilter(f) { activeFilter = f; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('btn'+f).classList.add('filter-active'); drawCharts(); }
+
+        function drawCharts(targetIdSuffix = "", timePeriod = null) {
+            const filter = timePeriod || activeFilter;
+            const cutoff = Date.now() - (filter * 864e5);
+            const filtered = db.filter(x => x.timestamp >= cutoff);
+            const isPrinting = targetIdSuffix !== "";
+
+            renderChart('goalChart' + targetIdSuffix, 'bar', appConfig.maintenance.map(m => m.label), appConfig.maintenance.map(m => filtered.filter(f => f.item === m.item).length), appConfig.maintenance.map(m => m.color), true, isPrinting);
+            const wLogs = filtered.filter(x => x.item === 'Weight').slice(-15);
+            renderChart('weightChart' + targetIdSuffix, 'line', wLogs.map(w => w.date), wLogs.map(w => w.value), '#FFD700', false, isPrinting);
+            const sLogs = filtered.filter(x => x.item === 'Shot');
+            renderChart('shotChart' + targetIdSuffix, 'bar', sLogs.map(s => s.date), sLogs.map(s => s.value || 1), '#A78BFA', false, isPrinting);
+
+            const cLogs = db.filter(x => x.category === 'Crisis' && x.timestamp >= cutoff);
+            const cData = prepareTimeData(cLogs, filter);
+            renderChart('crisisChart' + targetIdSuffix, 'line', cData.labels, cData.counts, '#FF3366', false, isPrinting);
+            const pLogs = filtered.filter(x => x.category === 'Pain' && x.timestamp >= cutoff).slice(-15);
+            renderChart('painChart' + targetIdSuffix, 'line', pLogs.map(p => p.time), pLogs.map(p => p.value), '#FF8C00', false, isPrinting);
+
+            [['state', 'stateChart'], ['sensory', 'sensoryChart'], ['meds', 'medChart']].forEach(([cat, id]) => {
+                const data = {}; filtered.filter(x => x.category === cat).forEach(x => data[x.item] = (data[x.item] || 0) + 1);
+                renderChart(id + targetIdSuffix, filter === 1 && !isPrinting ? 'pie' : 'line', Object.keys(data), Object.values(data), ['#FF66CC', '#00FF66', '#4A90E2', '#FFD700', '#A78BFA'], false, isPrinting);
+            });
         }
+
+        function prepareTimeData(logs, days) {
+            const labels = []; const counts = []; const now = new Date();
+            if (days === 1) { for (let i = 0; i < 24; i++) { labels.push(i + ":00"); counts.push(logs.filter(l => new Date(l.timestamp).getHours() === i).length); }
+            } else { for (let i = days - 1; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate() - i); const dStr = d.toLocaleDateString(); labels.push(dStr); counts.push(logs.filter(l => l.date === dStr).length); } }
+            return { labels, counts };
+        }
+
+        function renderChart(id, type, labels, data, colors, horiz = false, isPrinting = false) {
+            const ctx = document.getElementById(id);
+            if (!ctx) return;
+            if (charts[id]) charts[id].destroy();
+
+            let yAxisConfig = { ticks: { color: isPrinting ? '#000' : '#fff' }, beginAtZero: true };
+            if (id.startsWith('weightChart') && data.length > 0) {
+                const minVal = Math.min(...data); const maxVal = Math.max(...data);
+                yAxisConfig.beginAtZero = false;
+                yAxisConfig.suggestedMin = Math.floor(minVal / 5) * 5 - 5;
+                yAxisConfig.suggestedMax = Math.ceil(maxVal / 5) * 5 + 5;
+            } else if (type === 'line') { yAxisConfig.beginAtZero = true; }
+
+            charts[id] = new Chart(ctx, {
+                type, data: { labels, datasets: [{ data, backgroundColor: colors, borderColor: colors, fill: false, tension: 0.1, pointRadius: 4 }] },
+                options: { animation: false, responsive: false, devicePixelRatio: 2, indexAxis: horiz ? 'y' : 'x', 
+                    plugins: { legend: { display: type === 'pie', labels: { color: isPrinting ? '#000' : '#fff' } } }, 
+                    scales: { x: { ticks: { color: isPrinting ? '#000' : '#fff' } }, y: yAxisConfig } 
+                }
+            });
+        }
+
+        function prepareReport() {
+            const out = document.getElementById('printOutput'); const btn = document.getElementById('reportBtn');
+            btn.innerText = "Snapshotted Forensic Data..."; out.innerHTML = "";
+            const periods = [{n: 1, l: "Daily"}, {n: 7, l: "Weekly"}, {n: 30, l: "Monthly"}];
+            const categories = [['goalChart', 'Maintenance'], ['weightChart', 'Weight History'], ['shotChart', 'Shot Tracker'], ['crisisChart', 'Meltdown Frequency'], ['painChart', 'Pain History'], ['stateChart', 'System States'], ['sensoryChart', 'Sensory Analysis'], ['medChart', 'Medication Compliance']];
+
+            periods.forEach(p => {
+                const section = document.createElement('div'); section.className = "print-card"; section.innerHTML = `<h2>${p.l} Forensic Insight</h2>`;
+                categories.forEach(cat => {
+                    const canvasId = `${cat[0]}_p${p.n}`;
+                    section.innerHTML += `<h3>${cat[1]}</h3><canvas id="${canvasId}" width="800" height="400" style="display:none;"></canvas><img id="img_${canvasId}" style="display:block; width:100%;">`;
+                });
+                out.appendChild(section);
+            });
+
+            setTimeout(() => {
+                periods.forEach(p => drawCharts('_p' + p.n, p.n));
+                setTimeout(() => {
+                    document.querySelectorAll('#printOutput canvas').forEach(canv => { const img = document.getElementById('img_' + canv.id); img.src = canv.toDataURL("image/png"); canv.remove(); });
+                    document.getElementById('printModal').style.display = 'block'; btn.innerText = "📊 GENERATE MASTER REPORT";
+                }, 1200);
+            }, 500);
+        }
+
+        function closePrintReport() { document.getElementById('printModal').style.display = 'none'; }
+        function exportClinicalCSV() {
+            let csv = "Date,Time,Category,Item,Value,Note\n";
+            db.forEach(r => csv += `"${r.date}","${r.time}","${r.category}","${r.item}","${r.value || ''}","${r.note || ''}"\n`);
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download = 'AuDherapy_Forensic_Data.csv'; a.click();
+        }
+        function renderLogs() { document.getElementById('logList').innerHTML = db.slice().reverse().map(l => `<div>[${l.date} ${l.time}] ${l.category}: ${l.item} ${l.note ? '('+l.note+')' : ''}</div>`).join(''); }
         function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
         document.addEventListener("visibilitychange", () => { if(document.visibilityState === 'hidden' && savedPin) location.reload(); });
     </script>
