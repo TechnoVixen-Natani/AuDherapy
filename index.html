@@ -157,8 +157,14 @@
 
         <div class="card" style="border-left-color: var(--morning-gold);">
             <h2>Medication & Metrics</h2>
-            <div class="grid-2" id="medsGrid"></div>
-        </div>
+    
+            <div style="background: #2d2d2d; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; border: 1px solid var(--morning-gold);">
+                <input type="text" id="quickMedInput" placeholder="Quick log (e.g. Advil 200mg)..." style="flex: 1; padding: 10px; background: #1a1a1a; color: white; border: none; border-radius: 5px; font-size: 1rem;">
+                <button onclick="logQuickEntry()" style="background: var(--morning-gold); color: #1a1a1a; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; font-size: 1rem;">➕ Log</button>
+            </div>
+    
+        <div class="grid-2" id="medsGrid"></div>
+    </div>
 
         <button class="btn-meltdown" onclick="openModal()">⚠️ LOG MELTDOWN</button>
 
