@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuDherapy | v5.2 Full Clinical</title>
+    <title>AuDherapy | v5.3 Color-Coded Forensic</title>
     <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f43e.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-dark: #09060B; --panel-purple: #1A1124; --accent-purple: #3A2350;
             --text-green: #00FF66; --text-muted: #A199AB; --danger-red: #FF3366;
-            --morning-gold: #FFD700; --night-blue: #4A90E2; --mood-color: #66CCCC;
-            --state-pink: #FF66CC; --pain-orange: #FF8C00;
+            --morning-gold: #FFD700; --evening-orange: #FF8C00; --night-blue: #4A90E2; 
+            --mood-color: #66CCCC; --state-pink: #FF66CC; --pain-orange: #FF8C00;
+            --indica-purple: #A78BFA;
         }
 
         body { background-color: var(--bg-dark); color: var(--text-green); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
@@ -31,7 +32,7 @@
         .btn-pain { background: transparent; border: 1px solid var(--pain-orange); color: var(--pain-orange); font-size: 16px; padding: 10px 2px; }
         
         .flex-btn-group { display: flex; gap: 5px; width: 100%; margin-bottom: 5px; }
-        .main-btn { flex-grow: 1; font-size: 12px; }
+        .main-btn { flex-grow: 1; font-size: 12px; border-color: inherit; color: inherit; }
         .btn-info { width: 35px; background: transparent; border-color: var(--text-muted); color: var(--text-muted); flex-shrink: 0; font-family: serif; }
         .btn-del { width: 35px; background: rgba(255, 51, 102, 0.1); border-color: var(--danger-red); color: var(--danger-red); flex-shrink: 0; }
 
@@ -90,8 +91,10 @@
         </div>
 
         <div class="card" style="border-left-color: var(--state-pink);"><h2>System State</h2><div class="grid-2" id="stateGrid"></div></div>
-        <div class="card" style="border-left-color: var(--text-green);"><h2>Maintenance</h2><div class="grid-2" id="maintenanceGrid"></div></div>
         <div class="card" style="border-left-color: var(--night-blue);"><h2>Sensory Log</h2><div class="grid-2" id="sensoryGrid"></div></div>
+        <div class="card" style="border-left-color: var(--text-green);"><h2>Maintenance</h2><div class="grid-2" id="maintenanceGrid"></div></div>
+        
+        <button style="width:100%; background:var(--danger-red); color:white; padding:20px; border:none; border-radius:12px; font-weight:bold; font-size:18px;" onclick="log('Crisis', 'Emergency Call/Meltdown')">🚨 EMERGENCY</button>
     </div>
 
     <div class="app-container" id="analytics" style="display:none;">
@@ -110,10 +113,25 @@
         let charts = {};
 
         const defaultConfigs = {
-            maintenance: [{label: '💧 Water', item: 'Water'}, {label: '🪥 Teeth', item: 'Teeth'}],
-            state: [{label: '🌀 Flow', item: 'Flow'}, {label: '⚪ Neutral', item: 'Neutral'}],
-            sensory: [{label: '🔊 Noise', item: 'Noise'}, {label: '🔆 Light', item: 'Light'}],
-            meds: [{label: '🌅 Morning', item: 'Morning'}, {label: '😶‍🌫️ Indica', item: 'Indica'}]
+            maintenance: [
+                {label: '💧 Water', item: 'Water', color: 'var(--text-green)'}, 
+                {label: '🪥 Teeth', item: 'Teeth', color: 'var(--text-green)'}
+            ],
+            state: [
+                {label: '🌀 Flow', item: 'Flow', color: 'var(--state-pink)'}, 
+                {label: '⚪ Neutral', item: 'Neutral', color: 'var(--state-pink)'},
+                {label: '🚧 Exec Dys', item: 'Exec Dys', color: 'var(--state-pink)'}
+            ],
+            sensory: [
+                {label: '🔊 Noise', item: 'Noise', color: 'var(--night-blue)'}, 
+                {label: '🔆 Light', item: 'Light', color: 'var(--night-blue)'}
+            ],
+            meds: [
+                {label: '🌅 Morning', item: 'Morning', color: 'var(--morning-gold)'}, 
+                {label: '🌇 Evening', item: 'Evening', color: 'var(--evening-orange)'},
+                {label: '🌃 Night', item: 'Night', color: 'var(--night-blue)'},
+                {label: '😶‍🌫️ Indica', item: 'Indica', color: 'var(--indica-purple)'}
+            ]
         };
         let appConfig = JSON.parse(localStorage.getItem('audherapy_config')) || defaultConfigs;
 
@@ -158,23 +176,30 @@
         function renderGrid(sec, id) {
             const g = document.getElementById(id);
             g.innerHTML = appConfig[sec].map((b, i) => `
-                <div class="flex-btn-group">
+                <div class="flex-btn-group" style="color: ${b.color || 'var(--text-green)'}; border-color: ${b.color || 'var(--text-green)'};">
                     ${editMode ? `<button class="btn-del" onclick="deleteBtn('${sec}', ${i})">❌</button>` : ''}
                     <button class="main-btn" onclick="log('${sec}', '${b.item}')">${b.label}</button>
                     ${b.desc ? `<button class="btn-info" onclick="alert('${b.desc}')">i</button>` : ''}
                 </div>
-            `).join('') + (editMode ? `<button style="grid-column: span 2;" onclick="addBtn('${sec}')">+ ADD</button>` : '');
+            `).join('') + (editMode ? `<button style="grid-column: span 2; color:white; border-color:white;" onclick="addBtn('${sec}')">+ ADD ITEM</button>` : '');
         }
 
         function addBtn(sec) {
-            const l = prompt("Label (e.g. 💧 Water):"); const i = prompt("Short ID:"); const d = prompt("Definition:");
-            if(l && i) { appConfig[sec].push({label: l, item: i, desc: d}); localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); renderAllGrids(); }
+            const l = prompt("Label (e.g. 💊 Vyvanse):"); 
+            const i = prompt("Short ID (for stats):"); 
+            const d = prompt("Literal Definition (optional):");
+            const c = prompt("Hex Color (optional, e.g. #FF0000):");
+            if(l && i) { 
+                appConfig[sec].push({label: l, item: i, desc: d, color: c}); 
+                localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); 
+                renderAllGrids(); 
+            }
         }
         function deleteBtn(sec, i) { if(confirm("Delete?")) { appConfig[sec].splice(i, 1); localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); renderAllGrids(); } }
         function toggleEditMode() { editMode = !editMode; document.getElementById('editToggleBtn').style.color = editMode ? 'var(--danger-red)' : 'var(--text-muted)'; renderAllGrids(); }
         function toggleView(v) { document.getElementById('dashboard').style.display = v==='dashboard'?'block':'none'; document.getElementById('analytics').style.display = v==='analytics'?'block':'none'; if(v==='analytics') drawCharts(); }
         function drawCharts() {
-            const d = {}; db.filter(x => x.date === new Date().toLocaleDateString() && x.category === 'State').forEach(x => d[x.item] = (d[x.item] || 0) + 1);
+            const d = {}; db.filter(x => x.date === new Date().toLocaleDateString() && x.category === 'state').forEach(x => d[x.item] = (d[x.item] || 0) + 1);
             if(charts['stateChart']) charts['stateChart'].destroy();
             charts['stateChart'] = new Chart(document.getElementById('stateChart'), { type: 'pie', data: { labels: Object.keys(d), datasets: [{ data: Object.values(d), backgroundColor: ['#FF66CC', '#00FF66', '#4A90E2', '#FFD700'] }] }});
         }
