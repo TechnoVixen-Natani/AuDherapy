@@ -3,7 +3,7 @@
 ### **A Human-AI Collaborative Project**
 **Architect:** Natani Mayday/ TaskPuppy Loona  
 **Collaborator:** Gemini (AI)  
-
+### 🛠 [Click here for the Troubleshooting & PWA Guide](/TROUBLESHOOTING.md)
 ---
 
 ## **Project Vision**
