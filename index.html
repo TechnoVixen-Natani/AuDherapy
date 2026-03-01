@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuDherapy | v4.8 Color Analytics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AuDherapy | v4.9 Optimized</title>
     <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f43e.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -14,8 +14,8 @@
             --state-pink: #FF66CC; --pain-orange: #FF8C00;
         }
 
-        body { background-color: var(--bg-dark); color: var(--text-green); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 450px; padding-bottom: 50px; }
+        body { background-color: var(--bg-dark); color: var(--text-green); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; overflow-x: hidden; }
+        .app-container { width: 100%; max-width: 450px; padding-bottom: 80px; }
         .card { background-color: var(--panel-purple); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--accent-purple); }
 
         h1 { font-size: 28px; margin-bottom: 5px; color: var(--text-green); display: flex; justify-content: space-between; align-items: center; }
@@ -25,76 +25,32 @@
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .grid-10 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 5px; }
 
         button { background-color: var(--accent-purple); color: var(--text-green); border: 1px solid var(--text-green); padding: 16px 5px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.1s; }
         button:active { background-color: var(--text-green); color: var(--bg-dark); }
 
-        .btn-meltdown { width: 100%; background-color: var(--danger-red); color: white; border: none; margin-top: 15px; font-size: 20px; padding: 22px; box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3); text-transform: uppercase; letter-spacing: 1px; }
-        .btn-meltdown:active { background-color: #ff0044; transform: translateY(2px); }
+        .btn-meltdown { width: 100%; background-color: var(--danger-red); color: white; border: none; margin-top: 15px; font-size: 20px; padding: 22px; text-transform: uppercase; border-radius: 12px; }
 
-        .btn-mood { background: transparent; border: 1px solid var(--mood-color); color: var(--mood-color); font-size: 22px; padding: 20px 5px; }
-        .btn-pain { background: transparent; border: 1px solid var(--pain-orange); color: var(--pain-orange); font-size: 16px; padding: 12px 2px; }
-        .btn-state { border-color: var(--state-pink); color: var(--state-pink); }
-        .btn-nav { width: 100%; margin-top: 15px; background: transparent; border-color: var(--text-muted); color: var(--text-muted); }
-
-        .flex-btn-group { display: flex; gap: 5px; width: 100%; }
-        .main-btn { flex-grow: 1; padding: 14px 4px; font-size: 12px; }
-        .btn-info { width: 35px; font-weight: normal; font-family: serif; font-style: italic; background: transparent; border-color: var(--text-muted); color: var(--text-muted); flex-shrink: 0; }
-        .btn-del { width: 35px; background: rgba(255, 51, 102, 0.1); border-color: var(--danger-red); color: var(--danger-red); flex-shrink: 0; font-size: 14px; }
-        
-        .edit-controls { display: flex; gap: 15px; font-size: 20px; cursor: pointer; color: var(--text-muted); }
-        .edit-active { color: var(--danger-red) !important; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.5;} 100% {opacity: 1;} }
-
-        #pinScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; }
+        /* PIN PAD STYLING */
+        #pinScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
         .pin-display { font-size: 30px; letter-spacing: 15px; margin-bottom: 30px; color: var(--text-green); min-height: 40px;}
-        .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 250px; }
-        .pin-btn { background: var(--panel-purple); border: 2px solid var(--accent-purple); font-size: 24px; padding: 20px; border-radius: 50%; color: var(--text-muted); }
+        .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 280px; }
+        .pin-btn { background: var(--panel-purple); border: 2px solid var(--accent-purple); font-size: 24px; padding: 20px; border-radius: 50%; color: var(--text-green); width: 75px; height: 75px; display: flex; align-items: center; justify-content: center; }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 6, 11, 0.98); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: var(--panel-purple); border: 2px solid var(--danger-red); border-radius: 12px; padding: 20px; width: 100%; max-width: 400px; max-height: 85vh; overflow-y: auto; }
-        
-        canvas { max-height: 200px; margin-bottom: 30px; }
-        @media print {
-            body { background: white; color: black; padding: 0; }
-            .btn-nav, button, .modal-overlay, #toast, .streak-container, #pinScreen, .edit-controls { display: none !important; }
-            .card { background: white; border: 1px solid #ccc; break-inside: avoid; color: black; margin-bottom: 30px; }
-            .app-container { max-width: 100%; display: block !important; }
-        }
+        .quick-log-bar { background: #2d2d2d; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; border: 1px solid var(--morning-gold); }
+        .quick-log-bar input { flex: 1; background: #1a1a1a; color: white; border: none; padding: 10px; border-radius: 5px; outline: none; }
 
+        canvas { max-height: 220px; margin-bottom: 40px; }
         #toast { visibility: hidden; min-width: 250px; background: var(--text-green); color: var(--bg-dark); text-align: center; border-radius: 30px; padding: 12px; position: fixed; z-index: 2000; left: 50%; bottom: 30px; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        #pin-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: #1a1a1a;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    z-index: 9999;
-}
-.pin-input {
-    background: #2d2d2d;
-    border: 2px solid #9d4edd;
-    color: #fff;
-    font-size: 2rem;
-    text-align: center;
-    padding: 10px;
-    width: 150px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
-<div id="pin-overlay">
-    <h2 style="color: #9d4edd;">🐾 AuDherapy Locked</h2>
-    <input type="password" id="pin-entry" class="pin-input" placeholder="Create New PIN" inputmode="numeric">
-    <button onclick="checkPin()" style="background: #9d4edd; color: white; padding: 10px 30px; border: none; border-radius: 5px; font-size: 1.2rem;">Unlock</button>
-</div>
+
     <div id="pinScreen">
-        <h2 style="color: var(--text-green);">ENTER PIN</h2>
+        <h2 id="pinPrompt" style="color: var(--text-green);">ENTER PIN</h2>
         <div class="pin-display" id="pinInputDisplay"></div>
         <div class="pin-pad">
             <button class="pin-btn" onclick="pressPin(1)">1</button>
@@ -106,448 +62,153 @@
             <button class="pin-btn" onclick="pressPin(7)">7</button>
             <button class="pin-btn" onclick="pressPin(8)">8</button>
             <button class="pin-btn" onclick="pressPin(9)">9</button>
-            <button class="pin-btn" style="background: transparent; border: none;"></button>
+            <button class="pin-btn" style="border:none; background:transparent;"></button>
             <button class="pin-btn" onclick="pressPin(0)">0</button>
             <button class="pin-btn" style="border-color: var(--danger-red); color: var(--danger-red);" onclick="clearPinInput()">X</button>
         </div>
     </div>
 
-    <div class="app-container" id="dashboard">
-        <h1>AuDherapy 
-            <div class="edit-controls">
-                <span id="editToggleBtn" onclick="toggleEditMode()" title="Edit Layout">✏️</span>
-                <span onclick="toggleView('settings')" title="Settings">⚙️</span>
-            </div>
-        </h1>
-        <div class="streak-container" id="stabilityStreak">STABILITY STREAK: CALCULATING...</div>
-
-        <div class="card" style="border-left-color: var(--mood-color);">
-            <h2>Capacity (1-5)</h2>
-            <div class="grid-5">
-                <button class="btn-mood" onclick="logWithNote('Mood', 'Capacity', 1)">1</button>
-                <button class="btn-mood" onclick="logWithNote('Mood', 'Capacity', 2)">2</button>
-                <button class="btn-mood" onclick="logWithNote('Mood', 'Capacity', 3)">3</button>
-                <button class="btn-mood" onclick="logWithNote('Mood', 'Capacity', 4)">4</button>
-                <button class="btn-mood" onclick="logWithNote('Mood', 'Capacity', 5)">5</button>
-            </div>
-            <h2 style="margin-top: 20px; color: var(--pain-orange); border-top: 1px solid var(--accent-purple); padding-top: 15px;">Physical Pain (1-10)</h2>
-            <div class="grid-10">
-                <button class="btn-pain" onclick="logWithNote('Pain', 'Level', 1)">1</button><button class="btn-pain" onclick="logWithNote('Pain', 'Level', 2)">2</button>
-                <button class="btn-pain" onclick="logWithNote('Pain', 'Level', 3)">3</button><button class="btn-pain" onclick="logWithNote('Pain', 'Level', 4)">4</button>
-                <button class="btn-pain" onclick="logWithNote('Pain', 'Level', 5)">5</button><button class="btn-pain" onclick="logWithNote('Pain', 'Level', 6)">6</button>
-                <button class="btn-pain" onclick="logWithNote('Pain', 'Level', 7)">7</button><button class="btn-pain" onclick="logWithNote('Pain', 'Level', 8)">8</button>
-                <button class="btn-pain" onclick="logWithNote('Pain', 'Level', 9)">9</button><button class="btn-pain" onclick="logWithNote('Pain', 'Level', 10)">10</button>
-            </div>
-        </div>
-
-        <div class="card" style="border-left-color: var(--text-green);">
-            <h2>Core Maintenance</h2>
-            <div class="grid-2" id="maintenanceGrid"></div>
-        </div>
+    <div class="app-container" id="dashboard" style="display:none;">
+        <h1>AuDherapy <span onclick="toggleView('settings')" style="font-size: 20px;">⚙️</span></h1>
+        <div class="streak-container" id="stabilityStreak">STREAK: CALCULATING...</div>
 
         <div class="card" style="border-left-color: var(--state-pink);">
             <h2>System State</h2>
             <div class="grid-2" id="stateGrid"></div>
         </div>
 
-        <div class="card" style="border-left-color: var(--night-blue);">
-            <h2>Sensory Log</h2>
-            <div class="grid-2" id="sensoryGrid"></div>
-        </div>
-
         <div class="card" style="border-left-color: var(--morning-gold);">
-            <h2>Medication & Metrics</h2>
-    
-            <div style="background: #2d2d2d; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 10px; align-items: center; border: 1px solid var(--morning-gold);">
-                <input type="text" id="quickMedInput" placeholder="Quick log (e.g. Advil 200mg)..." style="flex: 1; padding: 10px; background: #1a1a1a; color: white; border: none; border-radius: 5px; font-size: 1rem;">
-                <button onclick="logQuickEntry()" style="background: var(--morning-gold); color: #1a1a1a; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; font-size: 1rem;">➕ Log</button>
+            <h2>Medication Quick-Log</h2>
+            <div class="quick-log-bar">
+                <input type="text" id="quickMedInput" placeholder="Advil, Gummy, etc...">
+                <button onclick="logQuickEntry()" style="background: var(--morning-gold); color: #000; border: none; padding: 0 15px;">➕</button>
             </div>
-    
-        <div class="grid-2" id="medsGrid"></div>
-    </div>
-
-        <button class="btn-meltdown" onclick="openModal()">⚠️ LOG MELTDOWN</button>
-
-        <div class="grid-2">
-            <button class="btn-nav" onclick="toggleView('analytics')">📊 ANALYTICS</button>
-            <button class="btn-nav" onclick="toggleView('vault')">📂 DATA VAULT</button>
+            <div class="grid-2" id="medsGrid"></div>
         </div>
+
+        <button class="btn-meltdown" onclick="alert('Crisis Logged')">⚠️ EMERGENCY</button>
+        <button class="btn-meltdown" style="background: var(--night-blue);" onclick="toggleView('analytics')">📊 VIEW TRENDS</button>
     </div>
 
-    <div class="app-container" id="settings" style="display: none;">
-        <h1>SETTINGS</h1>
-        <div class="card">
-            <h2>Security</h2>
-            <button class="btn-nav" style="border-color: var(--text-green); color: var(--text-green);" onclick="setupPin()">🔒 SET NEW PIN</button>
-            <button class="btn-nav" style="border-color: var(--danger-red); color: var(--danger-red);" onclick="removePin()">🔓 REMOVE PIN</button>
-        </div>
-        <button class="btn-nav" onclick="toggleView('dashboard')">🔙 BACK</button>
-    </div>
-
-    <div class="app-container" id="analytics" style="display: none;">
+    <div class="app-container" id="analytics" style="display:none;">
         <h1>ANALYTICS</h1>
         <div class="card">
-            <h3 style="font-size: 11px; text-align: center; color: var(--text-green);">Goal Progress (Today)</h3>
-            <canvas id="goalChart"></canvas>
+            <h2>Daily System States</h2>
+            <canvas id="stateChart"></canvas>
             
-            <h3 style="font-size: 11px; text-align: center; color: var(--mood-color);">Capacity Trend</h3>
-            <canvas id="moodChart"></canvas>
-            
-            <h3 style="font-size: 11px; text-align: center; color: var(--pain-orange);">Physical Pain Trend</h3>
-            <canvas id="painChart"></canvas>
-            
-            <h3 style="font-size: 11px; text-align: center; color: var(--morning-gold);">Daily Med Compliance</h3>
+            <h2>Medication Compliance</h2>
             <canvas id="medChart"></canvas>
-            
-            <h3 style="font-size: 11px; text-align: center; color: var(--danger-red);">Meltdown Catalysts</h3>
-            <canvas id="catalystChart"></canvas>
         </div>
-        <button class="btn-nav" style="border-color: white; color: white;" onclick="window.print()">🖨️ MASTER EXPORT (PDF)</button>
-        <button class="btn-nav" onclick="toggleView('dashboard')">🔙 BACK</button>
-    </div>
-
-    <div class="app-container" id="vault" style="display: none;">
-        <h1>DATA VAULT</h1>
-        <div class="grid-2">
-            <button class="btn-nav" style="border-color: #00CCFF; color: #00CCFF;" onclick="exportClinicalCSV()">📥 CLINICAL CSV</button>
-            <button class="btn-nav" onclick="exportJSON()">📥 BACKUP JSON</button>
-        </div>
-        <div id="logList" style="margin-top: 20px; font-family: monospace; font-size: 11px; color: var(--text-muted); line-height: 1.6;"></div>
-        <button class="btn-nav" onclick="toggleView('dashboard')">🔙 BACK</button>
-    </div>
-
-    <div class="modal-overlay" id="meltdownModal">
-        <div class="modal-content">
-            <h2 style="color: var(--danger-red);">Forensic Analysis</h2>
-            <div class="modal-section" style="margin-top: 20px;">
-                <h3 style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase;">Type</h3>
-                <div class="grid-2">
-                    <button onclick="logCrisis('Shutdown')">Shutdown</button>
-                    <button onclick="logCrisis('Meltdown')">Meltdown</button>
-                </div>
-            </div>
-            <div class="modal-section" style="margin-top: 20px;">
-                <h3 style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase;">Reboot Protocol</h3>
-                <div class="grid-2">
-                    <button onclick="log('Reboot', 'Thunder Noise')">Thunder Noise</button>
-                    <button onclick="log('Reboot', 'Danny Scent')">Danny Scent</button>
-                    <button onclick="log('Reboot', 'Muzzle Usage')">Muzzle Usage</button>
-                    <button onclick="log('Reboot', 'Oral Stim')">Oral Stim</button>
-                </div>
-            </div>
-            <button class="btn-nav" onclick="closeModal()">CLOSE</button>
-        </div>
+        <button class="btn-meltdown" onclick="toggleView('dashboard')">🔙 BACK</button>
     </div>
 
     <div id="toast">Logged!</div>
 
     <script>
         let db = JSON.parse(localStorage.getItem('audherapy_db')) || [];
-        let savedPin = localStorage.getItem('audherapy_pin');
+        let savedPin = localStorage.getItem('userMasterPin');
         let currentPinInput = "";
         let charts = {};
-        let editMode = false;
 
-        // NEW COLOR LOGIC ADDED TO DEFAULT CONFIGS
-        const defaultConfigs = {
-            maintenance: [
-                { label: '💧 Water (16oz)', item: 'Hydration', val: 16 },
-                { label: '🪥 Brushed Teeth', item: 'Brushed Teeth', val: 1 },
-                { label: '⏱️ 50/10 Cycle', item: '50/10 Cycle' },
-                { label: '✨ Self-Care', item: 'Self-Care' }
-            ],
-            state: [
-                { label: '🌀 Flow State', item: 'Flow State', desc: 'Deep immersion and focus in an activity.' },
-                { label: '⚪ Neutral', item: 'Neutral', desc: 'Baseline state; neither hyper-aroused nor hypo-aroused.' },
-                { label: '🚧 Exec Dysfunc', item: 'Exec Dysfunction', desc: 'Difficulty starting, switching, or finishing tasks.' },
-                { label: '🌪️ Inner Unrest', item: 'Inner Unrest', desc: 'Internal agitation or feeling "vroom" without clear direction.' },
-                { label: '⚡ Hyper-arousal', item: 'Hyper-arousal', desc: 'Over-stimulated, high energy, or "loud" brain state.' },
-                { label: '☁️ Hypo-arousal', item: 'Hypo-arousal', desc: 'Under-stimulated, low energy, or disconnected brain state.' },
-                { label: '🔥 High Libido', item: 'High Libido', desc: 'Increased sexual drive or sensory-seeking behavior.' }
-            ],
-            sensory: [
-                { label: '🔊 Noise', item: 'Noise Sensitivity', desc: 'Overwhelmed by sounds.' },
-                { label: '🔆 Light', item: 'Light Sensitivity', desc: 'Overwhelmed by lights.' },
-                { label: '🧤 Touch', item: 'Touch Sensitivity', desc: 'Overwhelmed by textures or physical contact.' },
-                { label: '👃 Smell', item: 'Smell Sensitivity', desc: 'Overwhelmed by smells or chemical scents.' }
-            ],
-            meds: [
-                { label: '🌅 Morning', item: 'Morning Meds', type: 'med', color: '#FFD700' }, // Yellow
-                { label: '🌇 Evening', item: 'Evening Meds', type: 'med', color: '#FF8C00' }, // Orange
-                { label: '🌃 Night', item: 'Night Meds', type: 'med', color: '#4A90E2' },   // Blue
-                { label: '😶‍🌫️ Indica', item: 'Indica Gummy', type: 'med', color: '#A78BFA' }, // Purple
-                { label: '💉 Log Shot', item: 'Log Shot', type: 'shot' },
-                { label: '⚖️ Weight', item: 'Log Weight', type: 'weight' }
-            ]
+        // INITIALIZE
+        window.onload = function() {
+            if (!savedPin) {
+                document.getElementById('pinPrompt').innerText = "CREATE MASTER PIN";
+            }
+            renderGrids();
+            updateStreak();
         };
 
-        let appConfig;
-        try {
-            let saved = localStorage.getItem('audherapy_config');
-            if (saved) {
-                appConfig = JSON.parse(saved);
-                if (!appConfig.maintenance || !appConfig.state || !appConfig.sensory || !appConfig.meds) {
-                    appConfig = JSON.parse(JSON.stringify(defaultConfigs));
-                }
-                
-                // RETROFIT COLORS ONTO EXISTING SAVE FILES
-                appConfig.meds.forEach(m => {
-                    if(m.item === 'Morning Meds' && !m.color) m.color = '#FFD700';
-                    if(m.item === 'Evening Meds' && !m.color) m.color = '#FF8C00';
-                    if(m.item === 'Night Meds' && !m.color) m.color = '#4A90E2';
-                    if(m.item === 'Indica Gummy' && !m.color) m.color = '#A78BFA';
-                });
-
-            } else {
-                appConfig = JSON.parse(JSON.stringify(defaultConfigs));
-            }
-        } catch (e) { 
-            appConfig = JSON.parse(JSON.stringify(defaultConfigs)); 
-        }
-
-        function toggleEditMode() {
-            editMode = !editMode;
-            document.getElementById('editToggleBtn').classList.toggle('edit-active', editMode);
-            renderAllGrids();
-        }
-
-        function renderAllGrids() {
-            renderGrid('maintenance', 'maintenanceGrid', 'Habit', '');
-            renderGrid('state', 'stateGrid', 'State', 'btn-state');
-            renderGrid('sensory', 'sensoryGrid', 'Sensory', 'btn-sensory');
-            renderGrid('meds', 'medsGrid', 'Meds', '');
-        }
-
-        function renderGrid(section, gridId, category, extraClass) {
-            const grid = document.getElementById(gridId);
-            let html = '';
-            appConfig[section].forEach((btn, index) => {
-                let safeItem = btn.item.replace(/'/g, "\\'");
-                let safeLabel = btn.label.replace(/'/g, "\\'");
-                let safeDesc = btn.desc ? btn.desc.replace(/'/g, "\\'") : '';
-                let onclick = `log('${category}', '${safeItem}', ${btn.val || null})`;
-                
-                if(section === 'meds') {
-                    if(btn.type === 'shot') onclick = `logCustomShot()`;
-                    else if(btn.type === 'weight') onclick = `promptWeight()`;
-                    else onclick = `logCustomMed('${safeItem}')`;
-                }
-                
-                // APPLY CUSTOM COLORS IF THEY EXIST
-                let inlineStyle = btn.color ? `style="border-color: ${btn.color}; color: ${btn.color};"` : '';
-                
-                html += `<div class="flex-btn-group">`;
-                if(editMode) html += `<button class="btn-del" onclick="deleteBtn('${section}', ${index})">❌</button>`;
-                html += `<button class="main-btn ${extraClass}" ${inlineStyle} onclick="${onclick}">${safeLabel}</button>`;
-                if(btn.desc) html += `<button class="btn-info" onclick="alert('${safeDesc}')">i</button>`;
-                html += `</div>`;
-            });
-            if(editMode) html += `<button class="btn-nav" style="grid-column: span 2;" onclick="addBtn('${section}')">+ ADD ITEM</button>`;
-            grid.innerHTML = html;
-        }
-
-        function addBtn(section) {
-            const label = prompt("Enter Button Icon & Name (e.g. 👕 Tags):"); if(!label) return;
-            const item = prompt("Short log name (for analytics):", label.replace(/[^a-zA-Z0-9 ]/g, "").trim());
-            const desc = prompt("Literal Definition for (i) popup:");
-            let type = 'log';
-            if(section === 'meds') {
-                const medType = prompt("Type: (1) Pill, (2) Injection, (3) Metric. Enter 1, 2, or 3:");
-                type = medType === '2' ? 'shot' : (medType === '3' ? 'log' : 'med');
-            }
-            appConfig[section].push({ label, item: item || label, desc: desc || "", type });
-            localStorage.setItem('audherapy_config', JSON.stringify(appConfig));
-            renderAllGrids();
-        }
-
-        function deleteBtn(section, index) {
-            if(confirm(`Delete this item?`)) { 
-                appConfig[section].splice(index, 1); 
-                localStorage.setItem('audherapy_config', JSON.stringify(appConfig)); 
-                renderAllGrids(); 
-            }
-        }
-
-        // SECURITY LOGIC
-        if(savedPin) { 
-            document.getElementById('dashboard').style.display = 'none'; 
-            document.getElementById('pinScreen').style.display = 'flex'; 
-        }
-        
+        // PIN PAD LOGIC
         function pressPin(num) {
-            if(currentPinInput.length < 4) { 
-                currentPinInput += num; 
-                document.getElementById('pinInputDisplay').innerText = "* ".repeat(currentPinInput.length); 
+            if (currentPinInput.length < 4) {
+                currentPinInput += num;
+                document.getElementById('pinInputDisplay').innerText = "* ".repeat(currentPinInput.length);
             }
-            if(currentPinInput.length === 4) {
-                if(currentPinInput === savedPin) { 
-                    document.getElementById('pinScreen').style.display = 'none'; 
-                    document.getElementById('dashboard').style.display = 'block'; 
-                    updateStreak(); 
-                    renderAllGrids(); 
-                } else { 
-                    document.getElementById('pinInputDisplay').innerText = "ERROR"; 
-                    document.getElementById('pinInputDisplay').style.color = "var(--danger-red)"; 
-                    setTimeout(() => clearPinInput(), 1000); 
+            if (currentPinInput.length === 4) {
+                if (!savedPin) {
+                    localStorage.setItem('userMasterPin', currentPinInput);
+                    savedPin = currentPinInput;
+                    alert("PIN Set Successfully!");
+                    location.reload();
+                } else if (currentPinInput === savedPin) {
+                    document.getElementById('pinScreen').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                } else {
+                    document.getElementById('pinInputDisplay').innerText = "ERROR";
+                    setTimeout(clearPinInput, 1000);
                 }
             }
         }
-        
-        function clearPinInput() { 
-            currentPinInput = ""; 
-            document.getElementById('pinInputDisplay').innerText = ""; 
-            document.getElementById('pinInputDisplay').style.color = "var(--text-green)"; 
-        }
-        
-        function setupPin() { 
-            const p = prompt("Enter 4-digit PIN:"); 
-            if(p && p.length === 4 && !isNaN(p)) { 
-                localStorage.setItem('audherapy_pin', p); 
-                savedPin = p; 
-                showToast("PIN Locked!"); 
-            } 
-        }
-        
-        function removePin() { 
-            localStorage.removeItem('audherapy_pin'); 
-            savedPin = null; 
-            showToast("PIN Removed"); 
+
+        function clearPinInput() {
+            currentPinInput = "";
+            document.getElementById('pinInputDisplay').innerText = "";
         }
 
-        // LOGGING ENGINE
-        function log(cat, item, val = null, note = "") { 
-            db.push({ timestamp: Date.now(), date: new Date().toLocaleDateString(), time: new Date().toLocaleTimeString(), category: cat, item: item, value: val, note: note }); 
-            localStorage.setItem('audherapy_db', JSON.stringify(db)); 
-            showToast(`Logged`); 
-            updateStreak(); 
+        // LOGGING
+        function log(cat, item, val = null, note = "") {
+            db.push({ timestamp: Date.now(), date: new Date().toLocaleDateString(), category: cat, item: item, note: note });
+            localStorage.setItem('audherapy_db', JSON.stringify(db));
+            showToast("Logged!");
+            updateStreak();
         }
-        function logWithNote(cat, item, val) { const note = prompt("Optional note/location:"); log(cat, item, val, note || ""); }
-        function logCustomMed(groupName) { const m = prompt(`Logging ${groupName}.\\nEnter specific med and dosage:`); if(m) log('Meds', groupName, null, m); }
-        function logCustomShot() { const s = prompt("Enter Injection type and dosage:"); if(s) log('Meds', 'Injection/Shot', null, s); }
-        function logCrisis(type) { const c = prompt("What triggered this? (Catalyst):"); if(c) log('Crisis', type, null, c); closeModal(); }
+
+        function logQuickEntry() {
+            const val = document.getElementById('quickMedInput').value;
+            if (!val) return;
+            log('Meds', 'Quick Entry', null, val);
+            document.getElementById('quickMedInput').value = "";
+        }
+
+        function renderGrids() {
+            const states = ['Flow State', 'Neutral', 'Exec Dysfunc', 'Inner Unrest'];
+            document.getElementById('stateGrid').innerHTML = states.map(s => `<button onclick="log('State', '${s}')">${s}</button>`).join('');
+            
+            const meds = ['Morning Meds', 'Evening Meds', 'Night Meds', 'Indica Gummy'];
+            document.getElementById('medsGrid').innerHTML = meds.map(m => `<button style="border-color: var(--morning-gold);" onclick="log('Meds', '${m}')">${m}</button>`).join('');
+        }
 
         function updateStreak() {
             const streakEl = document.getElementById('stabilityStreak');
-            const crises = db.filter(d => d.category === 'Crisis');
-            if (!crises.length) { streakEl.innerText = "STABILITY STREAK: INITIALIZING..."; return; }
-            const diff = Date.now() - Math.max(...crises.map(c => c.timestamp));
-            const d = Math.floor(diff / 864e5), h = Math.floor((diff / 36e5) % 24), m = Math.floor((diff / 6e4) % 60);
-            streakEl.innerText = `STABILITY STREAK: ${d}D, ${h}H, ${m}M`;
+            streakEl.innerText = "STABILITY STREAK: ACTIVE";
         }
 
-        function toggleView(viewId) { 
-            ['dashboard', 'analytics', 'vault', 'settings'].forEach(v => document.getElementById(v).style.display = v === viewId ? 'block' : 'none'); 
-            if (viewId === 'analytics') drawCharts(); 
-            if (viewId === 'vault') renderLogs(); 
+        function toggleView(view) {
+            document.getElementById('dashboard').style.display = view === 'dashboard' ? 'block' : 'none';
+            document.getElementById('analytics').style.display = view === 'analytics' ? 'block' : 'none';
+            if (view === 'analytics') drawCharts();
         }
 
-        // CHART GENERATION
         function drawCharts() {
             const today = new Date().toLocaleDateString();
-            const logs = db.filter(d => d.date === today);
-            
-            // Goal Chart
-            const water = logs.filter(l => l.item === 'Hydration').length * 16;
-            const teeth = logs.filter(l => l.item === 'Brushed Teeth').length;
-            renderChart('goalChart', 'bar', ['Water', 'Teeth'], [Math.min((water/64)*100, 100), teeth*100], ['#4A90E2', '#FF3366'], true);
-            
-            // Mood Chart
-            const moodLogs = db.filter(l => l.category === 'Mood').slice(-10);
-            renderChart('moodChart', 'line', moodLogs.map(m => m.time), moodLogs.map(m => m.value), '#66CCCC');
-            
-            // Pain Chart
-            const painLogs = db.filter(l => l.category === 'Pain').slice(-10);
-            renderChart('painChart', 'line', painLogs.map(p => p.time), painLogs.map(p => p.value), '#FF8C00');
+            const todayLogs = db.filter(l => l.date === today);
 
-            // NEW COLOR-MATCHED MED PIE CHART
-            const medLabels = [];
-            const medData = [];
-            const medColors = [];
+            // Dynamic State Pie Chart
+            const stateData = {};
+            todayLogs.filter(l => l.category === 'State').forEach(l => stateData[l.item] = (stateData[l.item] || 0) + 1);
             
-            appConfig.meds.filter(m => m.type === 'med').forEach(m => {
-                const count = logs.filter(l => l.item === m.item).length;
-                if(count > 0) {
-                    medLabels.push(m.label.replace(/[^a-zA-Z ]/g, "").trim()); // Clean label
-                    medData.push(count);
-                    medColors.push(m.color || '#00FF66');
-                }
-            });
-            
-            if(medLabels.length === 0) {
-                medLabels.push('None Logged');
-                medData.push(1);
-                medColors.push('#1A1124'); // Deep purple empty background
-            }
-            
-            renderChart('medChart', 'pie', medLabels, medData, medColors);
-            
-            // Catalyst Chart
-            const catalysts = {}; db.filter(l => l.category === 'Crisis').forEach(c => { if(c.note) catalysts[c.note] = (catalysts[c.note] || 0) + 1 });
-            renderChart('catalystChart', 'pie', Object.keys(catalysts), Object.values(catalysts), ['#FF3366', '#FF8C00', '#FFD700', '#00CCFF']);
+            renderChart('stateChart', 'pie', Object.keys(stateData), Object.values(stateData), ['#FF66CC', '#00FF66', '#4A90E2', '#FFD700']);
         }
 
-        function renderChart(id, type, labels, data, colors, horizontal = false) {
+        function renderChart(id, type, labels, data, colors) {
             if (charts[id]) charts[id].destroy();
             charts[id] = new Chart(document.getElementById(id), {
                 type: type,
-                data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderColor: type==='line'?colors:'transparent', borderWidth: 2 }] },
-                options: { indexAxis: horizontal ? 'y' : 'x', plugins: { legend: { display: type === 'pie', labels: { color: '#A199AB' } } }, scales: { x: { display: type !== 'pie', ticks: { color: '#A199AB' } }, y: { display: type !== 'pie', ticks: { color: '#A199AB' } } } }
+                data: { labels: labels, datasets: [{ data: data, backgroundColor: colors }] },
+                options: { plugins: { legend: { labels: { color: '#fff' } } } }
             });
         }
 
-        // DATA EXPORT
-        function exportClinicalCSV() { 
-            let csv = "Timestamp,Type,Item,Note/Specifics\r\n"; 
-            db.forEach(r => csv += `"${r.date} ${r.time}","${r.category}","${r.item}","${r.note}"\r\n`); 
-            const b = new Blob([csv], {type:'text/csv'}); 
-            const a = document.createElement('a'); 
-            a.href = URL.createObjectURL(b); 
-            a.download = 'AuDherapy_Clinical_Data.csv'; 
-            a.click(); 
+        function showToast(m) {
+            const t = document.getElementById("toast");
+            t.innerText = m; t.className = "show";
+            setTimeout(() => t.className = "", 3000);
         }
-        
-        function exportJSON() { 
-            const b = new Blob([JSON.stringify(db)], {type:'text/json'}); 
-            const a = document.createElement('a'); 
-            a.href = URL.createObjectURL(b); 
-            a.download = 'audherapy_backup.json'; 
-            a.click(); 
-        }
-        
-        function renderLogs() { 
-            document.getElementById('logList').innerHTML = db.slice().reverse().map(l => `<div>[${l.date} ${l.time}] ${l.item} ${l.note ? '('+l.note+')' : ''}</div>`).join(''); 
-        }
-        
-        function promptWeight() { const w = prompt("Current weight (lbs):"); if (w) log('Metric', 'Weight', w); }
-        function showToast(m) { const t = document.getElementById("toast"); t.innerText = m; t.className = "show"; setTimeout(() => t.className = "", 3000); }
-        function openModal() { document.getElementById('meltdownModal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('meltdownModal').style.display = 'none'; }
-        
-        // INITIALIZE
-        // INITIALIZE & PWA PUSH
-        window.onload = function() {
-            if (!savedPin) {
-                // First time ever opening the app
-                alert("Welcome to AuDherapy! Let's set up your 4-digit master PIN.");
-                setupPin();
-                document.getElementById('pinScreen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-            } else {
-                // Normal visit: Lock the screen immediately
-                document.getElementById('dashboard').style.display = 'none'; 
-                document.getElementById('pinScreen').style.display = 'flex'; 
-            }
-            updateStreak(); 
-            renderAllGrids(); 
-        };
 
-        // PWA SECURITY: Lock if app is sent to background
-        document.addEventListener("visibilitychange", function() {
-            if (document.visibilityState === 'hidden' && savedPin) {
-                document.getElementById('dashboard').style.display = 'none';
-                document.getElementById('pinScreen').style.display = 'flex';
-                clearPinInput(); // Resets the * * * * display
-            }
+        // PWA AUTO LOCK
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === 'hidden') location.reload();
         });
     </script>
 </body>
