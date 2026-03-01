@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuDherapy | v6.13 Dynamic Grid Polish</title>
+    <title>AuDherapy | v6.12 Nervous System</title>
     <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f43e.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -23,6 +23,7 @@
         h2 { font-size: 14px; margin-top: 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-2 > div.flex-btn-group:nth-child(odd):last-of-type { grid-column: span 2; }
         .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
         .grid-10 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 5px; }
 
@@ -88,10 +89,14 @@
     </div>
 
     <div class="app-container" id="dashboard" style="display:none;">
-        <h1>AuDherapy 
-            <div style="font-size: 20px; display: flex; gap: 15px;">
-                <span id="editToggleBtn" onclick="toggleEditMode()">✏️</span>
-                <span onclick="toggleView('analytics')">📊</span>
+        <h1 style="font-size: 36px; align-items: flex-start;">
+            <div style="line-height: 1.1;">
+                AuDherapy 
+                <div style="font-size: 14px; color: var(--text-muted); font-weight: normal; letter-spacing: 1px; margin-top: 8px;">Forensic Tracking & System Regulation</div>
+            </div>
+            <div style="font-size: 24px; display: flex; gap: 15px; margin-top: 5px;">
+                <span id="editToggleBtn" onclick="toggleEditMode()" style="cursor: pointer;">✏️</span>
+                <span onclick="toggleView('analytics')" style="cursor: pointer;">📊</span>
             </div>
         </h1>
 
@@ -198,6 +203,7 @@
         
         let appConfig = JSON.parse(localStorage.getItem('audherapy_config')) || defaultConfigs;
 
+        // Smart Injection: If the clinical states are missing, add them safely without wiping
         const clinicalStates = [
             {label: '⚡ Hyperarousal', item: 'Hyperarousal', color: '#FF66CC', desc: 'Over-stimulated / Fight or flight mode'},
             {label: '🧊 Hypoarousal', item: 'Hypoarousal', color: '#FF66CC', desc: 'Shut-down / Dissociation / Freeze mode'},
@@ -206,7 +212,7 @@
         
         clinicalStates.forEach(cState => {
             if (!appConfig.state.find(s => s.item === cState.item || s.label.includes(cState.item))) {
-                appConfig.state.unshift(cState); 
+                appConfig.state.unshift(cState); // Add to the top of the state list
             }
         });
 
@@ -263,16 +269,13 @@
         function renderAllGrids() { ['maintenance', 'state', 'sensory', 'meds'].forEach(s => renderGrid(s, s + 'Grid')); }
         function renderGrid(sec, id) {
             const g = document.getElementById(id);
-            g.innerHTML = appConfig[sec].map((b, i, arr) => {
-                // Determine if this is the final odd item to stretch its width across two columns
-                const isOddLast = (i === arr.length - 1) && (arr.length % 2 !== 0);
-                return `
-                <div class="flex-btn-group" style="color: ${b.color}; border-color: ${b.color}; ${isOddLast ? 'grid-column: span 2;' : ''}">
+            g.innerHTML = appConfig[sec].map((b, i) => `
+                <div class="flex-btn-group" style="color: ${b.color}; border-color: ${b.color};">
                     ${editMode ? `<button class="btn-del" onclick="deleteBtn('${sec}', ${i})">❌</button>` : ''}
                     <button class="main-btn" onclick="handleLog('${sec}', '${b.item}')">${b.label}</button>
                     <button class="btn-info" onclick="alert('${b.desc || b.label}')">i</button>
                 </div>
-            `}).join('') + (editMode ? `<button style="grid-column: span 2; color:white; border-color:white;" onclick="addBtn('${sec}')">+ ADD ITEM</button>` : '');
+            `).join('') + (editMode ? `<button style="grid-column: span 2; color:white; border-color:white;" onclick="addBtn('${sec}')">+ ADD ITEM</button>` : '');
         }
 
         function addBtn(sec) {
