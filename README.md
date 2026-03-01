@@ -38,3 +38,12 @@ This project serves as a case study in **Human-AI neuro-inclusion**.
 
 ---
 *Developed with a "measure twice, cut once" philosophy to ensure technical precision and logical soundness.*
+## [v6.12] - UI Optimization & Visual Hierarchy
+
+### Added
+* **Dynamic Grid Sizing:** Implemented a pure CSS layout rule (`:nth-child(odd):last-of-type`) to the `.grid-2` containers. Orphaned, odd-numbered buttons (such as in the Meds Quick-Log) now automatically span both columns to maintain strict visual symmetry without requiring underlying JavaScript modifications.
+* **Sub-branding:** Added the slogan *"Forensic Tracking & System Regulation"* beneath the main application title to reinforce the tool's precise, objective purpose.
+
+### Changed
+* **Header Redesign:** Increased the primary "AuDherapy" title font size to `36px` to establish a clearer visual hierarchy at the top of the dashboard.
+* **Header Layout Geometry:** Restructured the main `<h1>` block using nested flex containers. This ensures the title, the new slogan, and the right-aligned utility buttons (Edit/Analytics) maintain strict horizontal alignment and line-height consistency across various viewport sizes.
