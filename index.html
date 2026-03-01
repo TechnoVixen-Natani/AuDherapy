@@ -65,10 +65,34 @@
 
         #toast { visibility: hidden; min-width: 250px; background: var(--text-green); color: var(--bg-dark); text-align: center; border-radius: 30px; padding: 12px; position: fixed; z-index: 2000; left: 50%; bottom: 30px; transform: translateX(-50%); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        #pin-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #1a1a1a;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 9999;
+}
+.pin-input {
+    background: #2d2d2d;
+    border: 2px solid #9d4edd;
+    color: #fff;
+    font-size: 2rem;
+    text-align: center;
+    padding: 10px;
+    width: 150px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
     </style>
 </head>
 <body>
-
+<div id="pin-overlay">
+    <h2 style="color: #9d4edd;">🐾 AuDherapy Locked</h2>
+    <input type="password" id="pin-entry" class="pin-input" placeholder="Create New PIN" inputmode="numeric">
+    <button onclick="checkPin()" style="background: #9d4edd; color: white; padding: 10px 30px; border: none; border-radius: 5px; font-size: 1.2rem;">Unlock</button>
+</div>
     <div id="pinScreen">
         <h2 style="color: var(--text-green);">ENTER PIN</h2>
         <div class="pin-display" id="pinInputDisplay"></div>
@@ -494,10 +518,31 @@
         function closeModal() { document.getElementById('meltdownModal').style.display = 'none'; }
         
         // INITIALIZE
-        if(!savedPin) { 
+        // INITIALIZE & PWA PUSH
+        window.onload = function() {
+            if (!savedPin) {
+                // First time ever opening the app
+                alert("Welcome to AuDherapy! Let's set up your 4-digit master PIN.");
+                setupPin();
+                document.getElementById('pinScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+            } else {
+                // Normal visit: Lock the screen immediately
+                document.getElementById('dashboard').style.display = 'none'; 
+                document.getElementById('pinScreen').style.display = 'flex'; 
+            }
             updateStreak(); 
             renderAllGrids(); 
-        }
+        };
+
+        // PWA SECURITY: Lock if app is sent to background
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === 'hidden' && savedPin) {
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('pinScreen').style.display = 'flex';
+                clearPinInput(); // Resets the * * * * display
+            }
+        });
     </script>
 </body>
 </html>
