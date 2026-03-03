@@ -48,12 +48,13 @@
             font-weight: 900;
             text-transform: uppercase;
         }
-     /* Fixes the Ko-fi widget ghost box */
-        .kofi-widget-overlay-container {
+     /* Removes the white ghost box from the Ko-fi widget */
+        #kofidonate_iframe, 
+        .kofi-widget-overlay-container, 
+        .kofi-widget-overlay-container iframe {
             background: transparent !important;
-        }
-        iframe[title="Kofi-widget-overlay"] {
-            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
         }   
     </style>
 </head>
@@ -127,13 +128,13 @@
         }
     </script>
     <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
-<script>
-  kofiWidgetOverlay.draw('taskpuppyloona', {
-    'type': 'floating-chat',
-    'floating-chat.donateButton.text': 'Support me',
-    'floating-chat.donateButton.background-color': '#5cb85c',
-    'floating-chat.donateButton.text-color': '#fff'
-  });
-</script>    
+    <script>
+      kofiWidgetOverlay.draw('taskpuppyloona', {
+        'type': 'floating-chat',
+        'floating-chat.donateButton.text': 'Support me',
+        'floating-chat.donateButton.background-color': '#5cb85c',
+        'floating-chat.donateButton.text-color': '#fff'
+      });
+    </script>    
 </body>
 </html>

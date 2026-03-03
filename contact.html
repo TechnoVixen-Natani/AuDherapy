@@ -20,6 +20,13 @@
             padding: 18px; border: none; border-radius: 12px; cursor: pointer; 
             font-size: 16px; margin-top: 10px;
         }
+        #kofidonate_iframe, 
+        .kofi-widget-overlay-container, 
+        .kofi-widget-overlay-container iframe {
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
+        }
     </style>
 </head>
 <body>
@@ -73,14 +80,14 @@
             </button>
 
         </div>
-<script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
-<script>
-  kofiWidgetOverlay.draw('taskpuppyloona', {
-    'type': 'floating-chat',
-    'floating-chat.donateButton.text': 'Support me',
-    'floating-chat.donateButton.background-color': '#5cb85c',
-    'floating-chat.donateButton.text-color': '#fff'
-  });
-</script>
+    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+    <script>
+      kofiWidgetOverlay.draw('taskpuppyloona', {
+        'type': 'floating-chat',
+        'floating-chat.donateButton.text': 'Support me',
+        'floating-chat.donateButton.background-color': '#5cb85c',
+        'floating-chat.donateButton.text-color': '#fff'
+     });
+    </script>
 </body>
 </html>
