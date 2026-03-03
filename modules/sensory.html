@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AuDherapy | Sensory Log</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="../js/brain.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { background: #000; color: white; font-family: sans-serif; margin: 0; padding: 0; }
+        .app-container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; }
+        
+        #sensoryGrid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .sensory-btn {
+            width: 100%;
+            padding: 30px 10px;
+            border: none;
+            border-radius: 12px;
+            font-size: 22px; 
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .del-btn { position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; display: none; z-index: 5; }
+        .editing .del-btn { display: block; }
+        .sensory-btn-container { position: relative; }
+    </style>
+</head>
+<body onload="checkAuth(); renderSensory();">
+
+    <div class="app-container">
+        <h1 style="font-size: 34px; text-align: center; margin-bottom: 25px;">👂 Sensory Log</h1>
+
+        <div id="sensoryGrid"></div>
+
+        <div style="margin-top: 30px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border: 1px dashed #444;">
+            <button onclick="toggleEdit()" id="editToggleBtn" style="width:100%; padding:10px; background:#444; color:white; border:none; border-radius:8px; margin-bottom:15px;">✎ EDIT DEFAULTS</button>
+            
+            <div id="addForm" style="display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="newName" placeholder="New Category Name" style="padding:12px; border-radius:8px; border:1px solid #333; background:#111; color:white;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="color" id="newColor" value="#fbbf24" style="height:40px; border:none; background:none; flex:1;">
+                    <button onclick="addNewSensory()" style="padding:12px 20px; background:#10B981; color:black; font-weight:bold; border:none; border-radius:8px;">+ ADD</button>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="window.location.href='../dashboard.html'" 
+                style="width:100%; margin-top:30px; padding: 20px; border-radius: 12px; font-weight: bold; font-size: 20px; background:transparent; border:1px solid #444; color:#888;">
+            🔙 BACK TO DASHBOARD
+        </button>
+    </div>
+
+    <script>
+        // REVERTED TO YOUR 4 STANDARD DEFAULTS
+        const defaults = [
+            { label: "SMELL", color: "#A78BFA" },
+            { label: "TOUCH", color: "#60A5FA" },
+            { label: "LIGHT", color: "#FBBF24" },
+            { label: "NOISE", color: "#F87171" }
+        ];
+
+        let sensoryInputs = JSON.parse(localStorage.getItem('customSensory')) || defaults;
+        let isEditing = false;
+
+        function renderSensory() {
+            const grid = document.getElementById('sensoryGrid');
+            grid.className = isEditing ? 'editing' : '';
+            grid.innerHTML = "";
+
+            sensoryInputs.forEach((item, index) => {
+                grid.innerHTML += `
+                    <div class="sensory-btn-container">
+                        <button class="del-btn" onclick="removeSensory(${index})">✕</button>
+                        <button class="sensory-btn" 
+                                style="background-color: ${item.color}; color: #000;"
+                                onclick="if(!isEditing) logSensory('${item.label}')">
+                            ${item.label}
+                        </button>
+                    </div>`;
+            });
+        }
+
+        function logSensory(label) {
+            if (typeof window.log === 'function') {
+                // LOGGING AS 'Sensory' TO MATCH ANALYTICS
+                window.log('Sensory', label, 1, `Standard Sensory Input: ${label}`);
+                alert(`🐾🐾 SUCCESS 🐾🐾\nLogged: ${label}`);
+            }
+        }
+
+        function addNewSensory() {
+            const name = document.getElementById('newName').value;
+            if (!name) return;
+            sensoryInputs.push({ label: name.toUpperCase(), color: document.getElementById('newColor').value });
+            saveAndRender();
+        }
+
+        function removeSensory(index) {
+            if (confirm("Remove category?")) { sensoryInputs.splice(index, 1); saveAndRender(); }
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('customSensory', JSON.stringify(sensoryInputs));
+            renderSensory();
+        }
+
+        function toggleEdit() {
+            isEditing = !isEditing;
+            document.getElementById('editToggleBtn').innerText = isEditing ? "✔ FINISH" : "✎ EDIT DEFAULTS";
+            renderSensory();
+        }
+
+        function checkAuth() { if (sessionStorage.getItem('aud_auth') !== 'true') window.location.href = '../index.html'; }
+    </script>
+</body>
+</html>

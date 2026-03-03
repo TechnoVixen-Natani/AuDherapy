@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AuDherapy | Analytics</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; overflow-x: hidden; background-color: #000; color: white; font-family: sans-serif; }
+    .app-container { width: 100%; max-width: 600px; margin: 0 auto; padding: 15px; }
+    .card { width: 100%; margin-bottom: 30px; background: #111; padding: 25px; border-radius: 12px; border-left: 6px solid transparent; }
+    
+    /* PRINT ENGINE MODAL */
+    #printModal {
+        display: none; 
+        position: fixed; 
+        top: 0; left: 0; 
+        width: 100%; height: 100%; 
+        background: white; color: black; 
+        z-index: 9999; 
+        overflow-y: auto; 
+        padding: 20px;
+    }
+
+    @media print {
+        /* 1. Allows content to flow across as many pages as needed */
+        @page { size: auto; margin: 20mm; } 
+        
+        body, html { 
+            background: white !important; 
+            color: black !important; 
+            height: auto !important; 
+            overflow: visible !important; 
+        }
+
+        .no-print { display: none !important; }
+        
+        #printModal { 
+            display: block !important;
+            position: static !important; /* CRITICAL: Allows pagination */
+            width: 100% !important; 
+            height: auto !important;
+            overflow: visible !important;
+            padding: 0 !important;
+        }
+
+        /* 2. Fixes the right-side cutoff */
+        .print-section { 
+            width: 100% !important;
+            max-width: 100% !important;
+            page-break-inside: avoid; /* Prevents splitting a single chart */
+            margin-bottom: 40px;
+            display: block !important;
+        }
+
+        canvas { 
+            max-width: 100% !important; 
+            height: auto !important; 
+        }
+
+        h1, h2 { color: black !important; text-align: center; }
+    }
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="js/brain.js"></script>
+    <script src="js/stateAnalytics.js"></script>
+    <script src="js/maintenanceAnalytics.js"></script>
+    <script src="js/medsAnalytics.js"></script>
+    <script src="js/sensoryAnalytics.js"></script>
+    <script src="js/dailyAnalytics.js"></script>
+    <script src="js/crisisAnalytics.js"></script>
+</head>
+<body>
+
+    <div class="app-container no-print" id="analytics">
+        <h1 style="font-size: 42px; margin-bottom: 30px; text-align: center;">Forensic Trends</h1>
+        
+        <div class="time-filters" style="display: flex; gap: 10px; margin-bottom: 30px;">
+            <button class="filter-btn filter-active" id="btn1" onclick="setFilter(1)">Daily</button>
+            <button class="filter-btn" id="btn7" onclick="setFilter(7)">Weekly</button>
+            <button class="filter-btn" id="btn30" onclick="setFilter(30)">Monthly</button>
+        </div>
+
+        <div class="card" style="border-left-color: #10B981;">
+            <h2 style="font-size: 28px; margin-top: 0; color: #10B981;">🛠️ Maintenance</h2>
+            <div id="dailyMaintenanceBars"></div>
+        </div>
+
+        <div class="card" style="border-left-color: #3b82f6; min-height: 450px;">
+            <h2 style="font-size: 28px; margin-top: 0; color: #3b82f6;">⚡ Daily Functioning</h2>
+            <div style="height: 350px; position: relative;"><canvas id="dailyChart"></canvas></div>
+        </div>
+
+        <div class="card" style="border-left-color: #A78BFA; min-height: 450px;">
+            <h2 style="font-size: 28px; margin-top: 0; color: #A78BFA;">💊 Medications</h2>
+            <div style="height: 350px; position: relative;"><canvas id="medsChart"></canvas></div>
+        </div>
+
+        <div class="card" style="border-left-color: #fbbf24; min-height: 450px;">
+            <h2 style="font-size: 28px; margin-top: 0; color: #fbbf24;">👂 Sensory</h2>
+            <div style="height: 350px; position: relative;"><canvas id="sensoryChart"></canvas></div>
+        </div>
+
+        <div class="card" style="border-left-color: #f472b6; min-height: 450px;">
+            <h2 style="font-size: 28px; margin-top: 0; color: #f472b6;">📊 System State</h2>
+            <div style="height: 350px; position: relative;"><canvas id="stateChart"></canvas></div>
+        </div>
+
+        <div class="card" style="border-left-color: #ef4444; min-height: 450px;">
+            <h2 style="font-size: 28px; margin-top: 0; color: #ef4444;">🚨 Crisis Frequency (Triggers)</h2>
+            <div style="height: 350px; position: relative;"><canvas id="crisisChart"></canvas></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; padding-bottom: 40px;">
+            <button onclick="generateMasterReport()" style="background: #4b86e6; color: white; padding: 22px; font-size: 18px; font-weight: bold; border-radius: 12px; border: none; cursor: pointer;">📋 REPORT</button>
+            <button onclick="window.location.href='dashboard.html'" style="background: #333; color: white; padding: 22px; font-size: 18px; font-weight: bold; border-radius: 12px; border: none; cursor: pointer;">🏠 DASHBOARD</button>
+        </div>
+    </div>
+
+    <div id="printModal">
+        <div class="no-print" style="display: flex; gap: 10px; margin-bottom: 30px;">
+            <button onclick="window.print()" style="flex:2; padding: 20px; background: #10B981; border: none; border-radius: 8px; font-weight: bold; color: black;">🖨️ PRINT / SAVE PDF</button>
+            <button onclick="document.getElementById('printModal').style.display='none'" style="flex:1; padding: 20px; background: #eee; border: none; border-radius: 8px; font-weight: bold; color: black;">CLOSE</button>
+        </div>
+        <div id="printOutput"></div>
+    </div>
+
+    <script>
+        let currentFilter = 1;
+
+        function setFilter(days) {
+            currentFilter = days;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active'));
+            document.getElementById('btn' + days).classList.add('filter-active');
+            drawCharts();
+        }
+
+        function drawCharts(suffix = '', filterOverride = null) {
+            const days = filterOverride || currentFilter;
+            const vault = JSON.parse(localStorage.getItem('audherapy_db') || '[]');
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() - days);
+            
+            const filtered = vault.filter(log => {
+                if (!log.timestamp) return false;
+                const ts = new Date(isNaN(log.timestamp) ? log.timestamp : Number(log.timestamp));
+                return ts >= cutoff;
+            });
+
+            const isPrinting = suffix !== '';
+
+            if (typeof renderDailyAnalytics === 'function') renderDailyAnalytics(suffix, filtered, isPrinting, days);
+            if (typeof renderMaintenanceAnalytics === 'function') renderMaintenanceAnalytics(suffix, filtered, isPrinting, days);
+            if (typeof renderStateAnalytics === 'function') renderStateAnalytics(suffix, filtered, isPrinting, days);
+            if (typeof renderMedsAnalytics === 'function') renderMedsAnalytics(suffix, filtered, isPrinting, days);
+            if (typeof renderSensoryAnalytics === 'function') renderSensoryAnalytics(suffix, filtered, isPrinting, days);
+            if (typeof renderCrisisAnalytics === 'function') renderCrisisAnalytics(suffix, filtered, isPrinting, days);
+        }
+
+        function generateMasterReport() {
+            const modal = document.getElementById('printModal');
+            const out = document.getElementById('printOutput');
+            modal.style.display = 'block';
+            
+            out.innerHTML = `
+                <h1 style="text-align:center; border-bottom: 3px solid black; padding-bottom: 10px;">Forensic Master Report (30-Day Snapshot)</h1>
+                <p style="text-align:center;">User: Pupfem | Generated: ${new Date().toLocaleString()}</p>
+                
+                <div class="print-section">
+                    <h2>🛠️ Maintenance Log</h2>
+                    <div id="dailyMaintenanceBars-print"></div>
+                </div>
+
+                <div class="print-section" style="height: 400px;">
+                    <h2>⚡ Daily Functioning</h2>
+                    <canvas id="dailyChart-print"></canvas>
+                </div>
+
+                <div class="print-section" style="height: 400px;">
+                    <h2>💊 Medication Distribution</h2>
+                    <canvas id="medsChart-print"></canvas>
+                </div>
+
+                <div class="print-section" style="height: 400px;">
+                    <h2>👂 Sensory Trends</h2>
+                    <canvas id="sensoryChart-print"></canvas>
+                </div>
+
+                <div class="print-section" style="height: 400px;">
+                    <h2>📊 System State Distribution</h2>
+                    <canvas id="stateChart-print"></canvas>
+                </div>
+            `;
+            setTimeout(() => drawCharts('-print', 30), 100);
+        }
+
+        window.addEventListener('load', () => setTimeout(drawCharts, 200));
+    </script>
+</body>
+</html>

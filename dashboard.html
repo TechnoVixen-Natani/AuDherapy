@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AuDherapy | v2.0 Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="js/brain.js"></script>
+    <style>
+        .card h2 {
+            font-size: 32px; 
+            margin-top: 0;   
+            margin-bottom: 10px; 
+            line-height: 1.2;
+        }
+        .gear-btn {
+            position: fixed;
+            top: 25px; 
+            right: 25px;
+            background: transparent;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        .gear-btn:hover { transform: rotate(90deg); }
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        .footer-nav {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .nav-btn-secondary {
+            padding: 18px 25px;
+            background: #222;
+            color: #888;
+            border: 1px solid #444;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body onload="checkAuth()">
+    <button class="gear-btn" onclick="resetPin()">⚙️</button>
+    
+    <div class="app-container">
+        <h1 style="font-size: 36px;padding-left: 25px; font-family:monospace; margin-bottom: 25px;">
+            <div style="line-height: 1.1;">
+                🦴🐾AuDherapy🐾🦴
+                <div style="font-size: 20px;padding-left: 1px; color: var(--text-muted); font-weight: bold; letter-spacing: 1px; margin-top: 8px;">
+                    Forensic Tracking & Regulation
+                </div>
+            </div>
+        </h1>
+
+        <div class="card">
+            <h2 style="font-size: 36px; margin: 0 0 15px 0; line-height: 1.1;">System Control Hub</h2>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button onclick="window.location.href='modules/dailyfunction.html'" style="padding: 22px; background: #3b82f6; color: white; border: none; font-weight: bold; font-size: 20px; border-radius: 8px;">🔋 DAILY FUNCTION (Battery & Pain)</button>
+                <button onclick="window.location.href='modules/meds.html'" style="padding: 22px; background: var(--morning-gold); color: #000; border: none; font-weight: bold;font-size: 20px; border-radius: 8px;">💊 MEDICATION LOG</button>
+                <button onclick="window.location.href='modules/maintenance.html'" style="padding: 22px; background: var(--night-blue); color: #fff; border: none; font-weight: bold;font-size: 20px; border-radius: 8px;">💧 MAINTENANCE (64oz / Weight)</button>
+                <button onclick="window.location.href='modules/state.html'" style="padding: 22px; background: var(--state-pink); color: #fff; border: none; font-weight: bold;font-size: 20px; border-radius: 8px;">⚡ SYSTEM STATE</button>
+                <button onclick="window.location.href='modules/sensory.html'" style="padding: 22px; background: var(--accent-purple); color: var(--text-green); border: 1px solid var(--text-green); font-weight: bold;font-size: 20px; border-radius: 8px;">🧤 SENSORY LOG</button>
+                <button onclick="window.location.href='analytics.html'" style="padding: 22px; background: transparent; color: var(--morning-gold); border: 2px solid var(--morning-gold); font-weight: bold;font-size: 20px; border-radius: 8px; margin-top: 10px;">📊 FORENSIC TRENDS (Charts)</button>
+            </div>
+        </div>
+
+        <button style="width:100%; background:var(--danger-red); color:white; padding:20px; border:none; border-radius:12px; font-weight:bold; font-size:18px;" onclick="window.location.href='modules/crisis.html'">🚨 EMERGENCY LOG</button>        
+        
+        <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <button class="card" style="margin:0; padding:15px; text-align:center; border-left-color: var(--text-green); display: flex; align-items: center; justify-content: center; gap: 10px; color: white; cursor: pointer;" onclick="window.location.href='vault.html'">
+                <span>📂</span>
+                <span style="font-weight: bold; font-size: 16px;">VAULT</span>
+            </button>
+            <button class="card" style="margin:0; padding:15px; text-align:center; border-left-color: var(--danger-red); display: flex; align-items: center; justify-content: center; gap: 10px; color: white; cursor: pointer;" onclick="sessionStorage.clear(); window.location.href='index.html';">
+                <span>🔒</span>
+                <span style="font-weight: bold; font-size: 16px;">LOCK</span>
+            </button>
+        </div>
+
+        <div class="footer-nav">
+            <button onclick="window.location.href='about.html'" class="nav-btn-secondary">👤 BIO</button>
+            <button onclick="window.location.href='help.html'" class="nav-btn-secondary">❓ HELP</button> 
+            <button onclick="window.location.href='contact.html'" class="nav-btn-secondary">📬 CONTACT</button>
+        </div>
+    </div>
+
+    <button onclick="if(confirm('WIPE ALL DATA?')) { localStorage.removeItem('audherapy_db'); location.reload(); }" 
+            style="position:fixed; top:10px; left:10px; background:rgba(255,0,0,0.5); color:white; padding:10px; z-index:9999; border:none; border-radius:8px; font-size:10px;">
+        ⚠️ NUKE LOCAL DATABASE
+    </button>
+
+    <script>
+        function checkAuth() {
+            if (sessionStorage.getItem('aud_auth') !== 'true') window.location.href = 'index.html';
+        }
+
+        function resetPin() {
+            const oldPin = prompt("FORENSIC VERIFICATION: Enter Current Master PIN:");
+            const actualPin = localStorage.getItem('userMasterPin');
+            if (oldPin === actualPin) {
+                const newPin = prompt("SECURITY UPDATE: Enter New 4-Digit Master PIN:");
+                if (newPin && newPin.length === 4 && !isNaN(newPin)) {
+                    localStorage.setItem('userMasterPin', newPin);
+                    alert("🐾🐾 SUCCESS 🐾🐾\nMaster PIN recalibrated.");
+                }
+            } else {
+                alert("ACCESS DENIED: Incorrect current PIN.");
+            }
+        }
+    </script>
+    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+<script>
+  kofiWidgetOverlay.draw('taskpuppyloona', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Support me',
+    'floating-chat.donateButton.background-color': '#5cb85c',
+    'floating-chat.donateButton.text-color': '#fff'
+  });
+</script>    
+</body>
+</html>
