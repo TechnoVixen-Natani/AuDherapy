@@ -1,4 +1,4 @@
-const CACHE_NAME = 'audherapy-v6.12';
+const CACHE_NAME = 'audherapy-v3'; // Incrementing to v3
 const urlsToCache = [
   './index.html',
   './manifest.json'
