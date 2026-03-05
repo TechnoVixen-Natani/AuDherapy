@@ -1,4 +1,11 @@
-"icons": [
+{
+  "name": "AuDherapy",
+  "short_name": "AuDherapy",
+  "start_url": "./dashboard.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "icons": [
     {
       "src": "./assets/icon-maskable-192.png",
       "sizes": "192x192",
@@ -17,4 +24,5 @@
       "type": "image/png",
       "purpose": "any"
     }
-]
+  ]
+}
