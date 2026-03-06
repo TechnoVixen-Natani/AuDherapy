@@ -12,21 +12,25 @@
         .app-container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; }
         
         #sensoryGrid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+        display: grid;
+        /* minmax(0, 1fr) forces strict 50/50 splits, overriding long text */
+         grid-template-columns: repeat(2, minmax(0, 1fr)); 
+        gap: 15px;
+    }
 
-        .sensory-btn {
-            width: 100%;
-            padding: 30px 10px;
-            border: none;
-            border-radius: 12px;
-            font-size: 22px; 
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
+    .sensory-btn {
+        width: 100%;
+        padding: 30px 10px;
+        border: none;
+        border-radius: 12px;
+        font-size: 22px; 
+        font-weight: bold;
+        cursor: pointer;
+        text-transform: uppercase;
+        /* These two lines force long text to stack instead of breaking the box */
+        white-space: normal; 
+        word-wrap: break-word; 
+    }
         /* Make an odd last button span the full width */
         .sensory-btn-container:last-child:nth-child(odd) {
             grid-column: span 2;
