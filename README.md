@@ -1,4 +1,4 @@
-# 🐾 AuDherapy v2.0
+# 🐾 AuDherapy v2.1.0
 **Forensic Bio-Hacking for the Neurodivergent**
 
 ## 🦴 Overview
@@ -6,6 +6,8 @@ AuDherapy is a highly literal, local-first web application designed for objectiv
 
 ## ⚡ Key Features
 * **System Control Hub:** A centralized dashboard for logging daily functioning, medication, and system states.
+* **Extended Journal Module [NEW]:** A rich-text daily logging system supporting native OS emojis, GIF pasting, and chronological page-flipping tied directly to local storage.
+* **Dynamic UI Scaling [NEW]:** Strict CSS Grid layouts ensuring equal button scaling and responsive text-wrapping across all mobile viewports.
 * **Forensic Vault:** A secure local database utilizing browser LocalStorage. Data never leaves the device.
 * **Meltdown & Crisis Tracker:** For precise, asynchronous logging of sensory overloads.
 * **Data Portability:** Full `.json` master backup imports/exports and `.csv` exporting for external data analysis.
