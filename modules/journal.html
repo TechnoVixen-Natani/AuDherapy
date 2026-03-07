@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AuDherapy | Journal</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body { background: #000; color: white; font-family: sans-serif; margin: 0; padding: 20px; }
+        .app-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; height: 90vh; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .nav-arrow { background: none; border: none; color: white; font-size: 30px; cursor: pointer; padding: 10px; }
+        
+        #dateDisplay { font-size: 22px; font-weight: bold; text-align: center; }
+        
+        /* The Rich Text Editor */
+        #journalInput {
+            flex-grow: 1;
+            background: #1a1a1a;
+            color: white;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 18px;
+            overflow-y: auto;
+            outline: none;
+            line-height: 1.5;
+            white-space: pre-wrap; /* Keeps formatting and line breaks */
+        }
+        
+        #journalInput:empty:before {
+            content: "Start typing... (Use your OS emoji keyboard for emotes, or paste GIFs)";
+            color: #666;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 20px;
+            margin-top: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <button class="nav-arrow" onclick="changeDay(-1)">◀</button>
+            <div id="dateDisplay">Loading...</div>
+            <button class="nav-arrow" onclick="changeDay(1)">▶</button>
+        </div>
+
+        <div id="journalInput" contenteditable="true" oninput="markUnsaved()"></div>
+
+        <button class="save-btn" id="saveBtn" onclick="saveEntry()">✔ SAVE ENTRY</button>
+        
+        <button style="margin-top: 15px; padding: 15px; background: #333; color: white; border: none; border-radius: 12px; cursor: pointer;" onclick="window.location.href='../dashboard.html'">⬅ BACK TO DASHBOARD</button>
+    </div>
+
+    <script>
+        // Set starting date to today
+        let currentDate = new Date();
+        let saveButton = document.getElementById('saveBtn');
+
+        // Format date to use as the localStorage key (e.g., "2026-03-06")
+        function getStorageKey(dateObj) {
+            return "journal_" + dateObj.toISOString().split('T')[0];
+        }
+
+        // Format date for the display header (e.g., "Friday, Mar 6, 2026")
+        function getDisplayDate(dateObj) {
+            const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            return dateObj.toLocaleDateString(undefined, options);
+        }
+
+        function loadEntry() {
+            // Update the header
+            document.getElementById('dateDisplay').innerText = getDisplayDate(currentDate);
+            
+            // Fetch from local storage
+            const key = getStorageKey(currentDate);
+            const savedData = localStorage.getItem(key);
+            
+            const editor = document.getElementById('journalInput');
+            if (savedData) {
+                editor.innerHTML = savedData; // Load saved rich text/emojis/gifs
+            } else {
+                editor.innerHTML = ""; // Clear if empty
+            }
+            
+            // Reset button state
+            saveButton.innerText = "✔ SAVED";
+            saveButton.style.background = "#333";
+        }
+
+        function saveEntry() {
+            const key = getStorageKey(currentDate);
+            const editor = document.getElementById('journalInput');
+            
+            // Save the exact HTML inside the editable div
+            localStorage.setItem(key, editor.innerHTML);
+            
+            saveButton.innerText = "✔ SAVED";
+            saveButton.style.background = "#333";
+        }
+
+        function changeDay(offset) {
+            // Auto-save before flipping pages
+            saveEntry(); 
+            
+            // Change the date by adding/subtracting days
+            currentDate.setDate(currentDate.getDate() + offset);
+            loadEntry();
+        }
+
+        function markUnsaved() {
+            saveButton.innerText = "💾 SAVE CHANGES";
+            saveButton.style.background = "#28a745";
+        }
+
+        // Initialize on load
+        window.onload = loadEntry;
+    </script>
+</body>
+</html>
