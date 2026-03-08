@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuDherapy | Documentation</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .faq-section { margin-bottom: 30px; }
+        .faq-item { 
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid #333; 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 15px;
+        }
+        .faq-question { 
+            color: var(--text-green); 
+            font-weight: bold; 
+            font-size: 18px; 
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .faq-answer { color: #ccc; line-height: 1.6; font-size: 14px; }
+        .step-number { 
+            background: var(--text-green); 
+            color: #000; 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 12px; 
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <h1 style="text-align: center; margin-bottom: 30px;">System Documentation</h1>
+
+        <div class="faq-section">
+            <h2 style="color: var(--morning-gold); border-bottom: 1px solid #444; padding-bottom: 10px;">Common Inquiries</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">🦴 What is "Forensic Tracking"?</div>
+                <div class="faq-answer">It is a high-precision data method used to identify logical glitches in daily regulation. Instead of vague moods, we track specific metrics like medication timing and sensory triggers.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">🔒 How secure is my data?</div>
+                <div class="faq-answer">The app utilizes a Master PIN system and Session Authorization. All data is stored locally on your device's browser memory (LocalStorage), meaning it never leaves your hardware.</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2 style="color: var(--accent-purple); border-bottom: 1px solid #444; padding-bottom: 10px;">Operational Procedures</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">How to update your Master PIN:</div>
+                <div class="faq-answer">
+                    <p><span class="step-number">1</span> Click the ⚙️ gear icon on the dashboard.</p>
+                    <p><span class="step-number">2</span> Enter your current PIN for forensic verification.</p>
+                    <p><span class="step-number">3</span> Enter your new 4-digit code to receive the 🐾🐾 SUCCESS 🐾🐾 confirmation.</p>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="window.location.href='dashboard.html'" style="width: 100%; padding: 22px; background: var(--night-blue); color: white; border: none; border-radius: 12px; font-weight: 900; font-size: 20px; cursor: pointer; margin-top: 20px;">
+            BACK TO HUB
+        </button>
+    </div>
+</body>
+</html>
