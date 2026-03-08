@@ -1,25 +1,44 @@
-# 🐾 AuDherapy v2.1.0
-**Forensic Bio-Hacking for the Neurodivergent**
+🐾 AuDherapy | Forensic Bio-Tracking & Sensory OS
+AuDherapy is a privacy-first, forensic-grade personal tracking application designed for meticulous data analysis and sensory management. It utilizes a "Low-Light, High-Precision" UI to support neurodivergent productivity and longitudinal health tracking.
 
-## 🦴 Overview
-AuDherapy is a highly literal, local-first web application designed for objective data tracking and neurodivergent regulation. Instead of tracking vague moods, this system utilizes a "forensic tracking" methodology to measure specific metrics like medication timing, sensory triggers, and system maintenance. 
+🚀 Version 1.0: Native & Heavy Storage Upgrade
+The system has officially transitioned into a hybrid-native environment, bypassing the limitations of standard web-only applications.
 
-## ⚡ Key Features
-* **System Control Hub:** A centralized dashboard for logging daily functioning, medication, and system states.
-* **Extended Journal Module [NEW]:** A rich-text daily logging system supporting native OS emojis, GIF pasting, and chronological page-flipping tied directly to local storage.
-* **Dynamic UI Scaling [NEW]:** Strict CSS Grid layouts ensuring equal button scaling and responsive text-wrapping across all mobile viewports.
-* **Forensic Vault:** A secure local database utilizing browser LocalStorage. Data never leaves the device.
-* **Meltdown & Crisis Tracker:** For precise, asynchronous logging of sensory overloads.
-* **Data Portability:** Full `.json` master backup imports/exports and `.csv` exporting for external data analysis.
-* **Objective Analytics:** Visual charting of system metrics (Medication, Maintenance, Sensory Trends) to identify logical glitches in daily regulation.
+📥 Native Distribution (AuDherapy.apk)
+Direct Installation: A signed Android package (AuDherapy.apk) is now available for native deployment. This provides a dedicated home-screen presence and optimized performance for the Pixel 9 Pro.
 
-## 🔒 Security
-AuDherapy utilizes a Master PIN system and Session Authorization to prevent unauthorized logging. All forensic data is strictly stored on the local hardware.
+Self-Hosted Distribution: The Dashboard now features an internal system utility for direct downloads and updates, ensuring total independence from external app stores.
 
-## 🛠️ Tech Stack
-* HTML5 / CSS3 (Custom responsive styling with a dark-mode, high-contrast palette)
-* Vanilla JavaScript (ES6+)
-* Chart.js (For objective data visualization)
+Integrity Verification: Each build includes a SHA-256 cryptographic hash to verify that the system environment remains untampered.
 
----
-*Built with a "measure twice, cut once" philosophy.*
+💾 The Heavy Vault (Storage V2)
+The application has moved beyond the 5MB "text-only" limit to a high-capacity binary storage engine.
+
+IndexedDB Implementation: Media files, including video and audio memos, are now stored as raw binary data directly on the device's hard drive.
+
+Forensic Logs: High-definition video journals and sensory logs can now be recorded and reviewed without risk of data overflow or browser crashes.
+
+Hardware-Direct Storage: Local data persists securely across sessions, providing a permanent and private database for health and spending history.
+
+✨ Personalized Experience & System Familiarity
+The OS is designed to recognize and adapt to its user, creating a cohesive link between the data and the individual.
+
+Identity Integration: The environment utilizes personal data points to tailor the interface, ensuring the forensic workspace feels uniquely your own.
+
+Dynamic Milestones: The system tracks significant personal chronologies—be sure to look for a special surprise on your special day within the dashboard.
+
+🛠️ Technical Stack
+Framework: HTML5, CSS3, Vanilla JavaScript
+
+Native Bridge: Capacitor.js
+
+Database: IndexedDB (The Heavy Vault) / LocalStorage (Auth & Master PIN)
+
+Design Philosophy: Forensic-grade UI with CSS-variable-driven low-light theming.
+
+🏁 Getting Started
+Security Bypass: Enter the Master PIN at the forensic gate.
+
+Native Install: Navigate to the Dashboard and tap "INSTALL AuDherapy.apk" to move the app to your native environment.
+
+Verify: Use the SHA-256 hash listed in the system utility to confirm a successful and secure installation.
