@@ -6,49 +6,33 @@
     <title>AuDherapy | Journal</title>
     <link rel="stylesheet" href="../style.css">
     <style>
-        body { background: #000; color: white; font-family: sans-serif; margin: 0; padding: 20px; }
-        .app-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; height: 90vh; }
+        body { background: #000; color: white; font-family: sans-serif; margin: 0; padding: 15px; box-sizing: border-box; }
+        .app-container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; height: 92vh; }
+        .header { display: flex; justify-content: space-between; align-items: center; height: 50px; }
+        .nav-arrow { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 5px 15px; }
+        #dateDisplay { font-size: 18px; font-weight: bold; color: #FFD700; }
+        #journalInput { flex: 1; background: #111; color: white; border: 1px solid #333; border-radius: 12px; padding: 15px; font-size: 18px; overflow-y: auto; outline: none; margin: 10px 0; }
+        .controls-row { display: flex; gap: 10px; margin-bottom: 10px; height: 55px; }
+        .btn-memo { flex: 1; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; font-size: 14px; }
+        .save-btn { width: 100%; height: 60px; background: #333; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; margin-bottom: 15px; }
+        .media-vault { border-top: 1px solid #222; padding-top: 10px; height: 120px; }
+        .media-label { font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 8px; }
+        .media-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .media-item { min-width: 80px; height: 80px; background: #1a1a1a; border-radius: 8px; border: 1px solid #333; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .nav-arrow { background: none; border: none; color: white; font-size: 30px; cursor: pointer; padding: 10px; }
-        
-        #dateDisplay { font-size: 22px; font-weight: bold; text-align: center; }
-        
-        /* The Rich Text Editor */
-        #journalInput {
-            flex-grow: 1;
-            background: #1a1a1a;
-            color: white;
-            border: 2px solid #333;
-            border-radius: 12px;
-            padding: 15px;
-            font-size: 18px;
-            overflow-y: auto;
-            outline: none;
-            line-height: 1.5;
-            white-space: pre-wrap; /* Keeps formatting and line breaks */
-        }
-        
-        #journalInput:empty:before {
-            content: "Start typing... (Use your OS emoji keyboard for emotes)";
-            color: #666;
-        }
-
-        .save-btn {
-            width: 100%;
-            padding: 20px;
-            margin-top: 15px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-    </style>
+        /* Dynamic Placeholder for the Journal Box */
+        #journalInput:empty::before {
+            content: attr(data-placeholder);
+            color: #555; /* A quiet, low-light gray */
+            font-style: italic;
+            pointer-events: none;
+            display: block;
+        }       
+  </style>
 </head>
 <body>
+    <input type="file" id="videoTrigger" accept="video/*" capture="camcorder" style="display:none" onchange="processMedia(this, 'Video')">
+
     <div class="app-container">
         <div class="header">
             <button class="nav-arrow" onclick="changeDay(-1)">◀</button>
@@ -58,65 +42,100 @@
 
         <div id="journalInput" contenteditable="true" oninput="markUnsaved()"></div>
 
-        <button class="save-btn" id="saveBtn" onclick="saveEntry()">✔ SAVE ENTRY</button>
-        
-        <button style="margin-top: 15px; padding: 15px; background: #333; color: white; border: none; border-radius: 12px; cursor: pointer;" onclick="window.location.href='../dashboard.html'">⬅ BACK TO DASHBOARD</button>
+        <div class="controls-row">
+            <button id="recordBtn" class="btn-memo" style="background: #1dc00e;" onclick="toggleInternalMic()">🎙️ VOICE</button>
+            <button class="btn-memo" style="background:#820eef;" onclick="document.getElementById('videoTrigger').click()">📹 VIDEO</button>
+        </div>
+
+        <button class="save-btn" id="saveBtn" onclick="saveEntry()">✔ SAVED</button>
+
+        <div class="media-vault">
+            <div class="media-label">Forensic Media Vault</div>
+            <div id="mediaGrid" class="media-grid"></div>
+        </div>
+
+        <button style="background: #820eef; font-family:calibri;font: bold; font-weight: bolder; color:#1dc00e; font-size:32px; padding:10px;" onclick="window.location.href='../dashboard.html'">⬅ HUB</button>
     </div>
-
+    <div id="vaultOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:black; z-index:1000; flex-direction:column; align-items:center; justify-content:center;">
+        <button onclick="closeVault()" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.2); border:none; color:white; font-size:30px; border-radius:50%; width:60px; height:60px; cursor:pointer;">✕</button>
+    
+        <div id="playerContainer" style="width:90%; height:70%; display:flex; align-items:center; justify-content:center;">
+            </div>
+    </div>
+    <script src="../js/brain.js"></script>
     <script>
-        // Set starting date to today
         let currentDate = new Date();
-        let saveButton = document.getElementById('saveBtn');
+        const editor = document.getElementById('journalInput');
+        const saveButton = document.getElementById('saveBtn');
 
-        // Format date to use as the localStorage key (e.g., "2026-03-06")
-        function getStorageKey(dateObj) {
-            return "journal_" + dateObj.toISOString().split('T')[0];
-        }
-
-        // Format date for the display header (e.g., "Friday, Mar 6, 2026")
-        function getDisplayDate(dateObj) {
-            const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-            return dateObj.toLocaleDateString(undefined, options);
-        }
+        function getStorageKey(date) { return "journal_" + date.toISOString().split('T')[0]; }
 
         function loadEntry() {
-            // Update the header
-            document.getElementById('dateDisplay').innerText = getDisplayDate(currentDate);
-            
-            // Fetch from local storage
-            const key = getStorageKey(currentDate);
-            const savedData = localStorage.getItem(key);
-            
-            const editor = document.getElementById('journalInput');
-            if (savedData) {
-                editor.innerHTML = savedData; // Load saved rich text/emojis/gifs
-            } else {
-                editor.innerHTML = ""; // Clear if empty
-            }
-            
-            // Reset button state
+            document.getElementById('dateDisplay').innerText = currentDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+            editor.innerHTML = localStorage.getItem(getStorageKey(currentDate)) || "";
             saveButton.innerText = "✔ SAVED";
             saveButton.style.background = "#333";
+            renderVault();
         }
+
+            function renderVault() {
+        const mediaGrid = document.getElementById('mediaGrid');
+        mediaGrid.innerHTML = "";
+        const dateStr = currentDate.toLocaleDateString();
+        
+        db = JSON.parse(localStorage.getItem('audherapy_db')) || [];
+        const dayMemos = db.filter(e => e.date === dateStr && e.category === 'Journal');
+        
+        dayMemos.forEach(memo => {
+            const item = document.createElement('div');
+            item.className = 'media-item';
+            item.innerHTML = memo.item.includes('Video') ? '📹' : '🎙️';
+            
+           item.onclick = async () => {
+                const container = document.getElementById('playerContainer');
+                const overlay = document.getElementById('vaultOverlay');
+                
+                let mediaSource = memo.value; // Default for old text-based files
+                
+                // THE BRIDGE: If it has the new flag, fetch it from the hard drive
+                if (memo.isHeavy) {
+                    const blob = await getMediaFromVault(memo.value);
+                    mediaSource = URL.createObjectURL(blob); // Temporarily converts the Blob to a readable link
+                }
+                
+                container.innerHTML = memo.item.includes('Video') 
+                    ? `<video src="${mediaSource}" controls autoplay playsinline style="width:100%; height:100%;"></video>` 
+                    : `<audio src="${mediaSource}" controls autoplay style="width:100%;"></audio>`;
+                
+                overlay.style.display = 'flex'; 
+                window.history.pushState({ vaultOpen: true }, "");
+            }
+    
+            mediaGrid.appendChild(item);
+        });
+    }
+
+// Listen for the Android hardware back button eating the "fake page"
+window.addEventListener('popstate', (event) => {
+    const overlay = document.getElementById('vaultOverlay');
+    const container = document.getElementById('playerContainer');
+    
+    if (overlay && overlay.style.display === 'flex') {
+        if (container) container.innerHTML = ""; // Stop media
+        overlay.style.display = 'none';          // Hide player
+    }
+});
+
+// The on-screen "X" button now just simulates the hardware back button!
+function closeVault() {
+    window.history.back();
+}
 
         function saveEntry() {
-            const key = getStorageKey(currentDate);
-            const editor = document.getElementById('journalInput');
-            
-            // Save the exact HTML inside the editable div
-            localStorage.setItem(key, editor.innerHTML);
-            
+            localStorage.setItem(getStorageKey(currentDate), editor.innerHTML);
             saveButton.innerText = "✔ SAVED";
             saveButton.style.background = "#333";
-        }
-
-        function changeDay(offset) {
-            // Auto-save before flipping pages
-            saveEntry(); 
-            
-            // Change the date by adding/subtracting days
-            currentDate.setDate(currentDate.getDate() + offset);
-            loadEntry();
+            log('Journal', 'TextUpdate', null, 'Daily entry saved');
         }
 
         function markUnsaved() {
@@ -124,8 +143,36 @@
             saveButton.style.background = "#28a745";
         }
 
-        // Initialize on load
-        window.onload = loadEntry;
+        function changeDay(offset) {
+            saveEntry();
+            currentDate.setDate(currentDate.getDate() + offset);
+            loadEntry();
+        }
+
+        // 🎈 PERSONALIZED JOURNAL PROMPT
+function setJournalPrompt() {
+    const editor = document.getElementById('journalInput');
+    const profileStr = localStorage.getItem('audherapy_profile');
+    let name = "";
+    
+    // Check if the profile exists and has a name
+    if (profileStr) {
+        const profile = JSON.parse(profileStr);
+        if (profile.name) {
+            name = profile.name;
+        }
+    }
+    
+    // Format the literal string
+    const promptText = name ? `${name}, how was your day?` : "How was your day?";
+    
+    // Inject it into the HTML attribute
+    editor.setAttribute('data-placeholder', promptText);
+}
+        window.onload = () => {
+    loadEntry();
+    setJournalPrompt();
+};
     </script>
 </body>
 </html>

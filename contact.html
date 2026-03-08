@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AuDherapy | Contact</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        
+        .contact-form { display: flex; flex-direction: column; gap: 15px; }
+        label { color: var(--text-muted); font-size: 11px; text-transform: uppercase; margin-left: 5px; }
+        input, select, textarea { 
+            width: 100%; padding: 15px; background: #000; color: #fff; 
+            border: 1px solid #333; border-radius: 12px; font-size: 14px; 
+            box-sizing: border-box;
+        }
+        input:focus, textarea:focus { border-color: var(--text-green); outline: none; }
+        .send-btn { 
+            background: var(--text-green); color: #000; font-weight: bold; 
+            padding: 18px; border: none; border-radius: 12px; cursor: pointer; 
+            font-size: 16px; margin-top: 10px;
+        }
+        #kofidonate_iframe, 
+        .kofi-widget-overlay-container, 
+        .kofi-widget-overlay-container iframe {
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <h1>📬 Contact Forensic</h1>
+        <p style="color:var(--text-muted); margin-bottom: 25px;">Direct line for technical inquiries and AI collaborations.</p>
+
+        <div class="card">
+            <form action="https://formspree.io/f/xojnzrrd" method="POST" class="contact-form">
+                
+                <div>
+                    <label>Your Name</label>
+                    <input type="text" name="name" required placeholder="Name/Handle">
+                </div>
+
+                <div>
+                    <label>Return Email</label>
+                    <input type="email" name="_replyto" required placeholder="email@example.com">
+                </div>
+
+                <div>
+                    <label>Inquiry Type</label>
+                    <select name="subject">
+                        <option value="AI Training">AI Training & Logic</option>
+                        <option value="Data Tasking">Data Tasking Inquiry</option>
+                        <option value="Support">General Support</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Message</label>
+                    <textarea name="message" rows="5" required placeholder="Write your message here..."></textarea>
+                </div>
+
+                <input type="text" name="_gotcha" style="display:none">
+
+                <button type="submit" class="send-btn">SEND TRANSMISSION</button>
+            </form>
+        <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+            
+            <button onclick="window.location.href='dashboard.html'" 
+                    style="width:100%; background:transparent; color:#888; border:1px solid #333; padding:18px; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 13px;">
+                🏠 DASHBOARD
+            </button>
+
+            <button onclick="window.location.href='about.html'" 
+                    style="width:100%; background:transparent; color:#888; border:1px solid #333; padding:18px; border-radius:12px; font-weight:bold; cursor:pointer; font-size: 13px;">
+                👤 VIEW BIO
+            </button>
+
+        </div>
+    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+    <script>
+      kofiWidgetOverlay.draw('taskpuppyloona', {
+        'type': 'floating-chat',
+        'floating-chat.donateButton.text': 'Support me',
+        'floating-chat.donateButton.background-color': '#5cb85c',
+        'floating-chat.donateButton.text-color': '#fff'
+     });
+    </script>
+</body>
+</html>

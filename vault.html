@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AuDherapy | Forensic Vault</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="brain.js"></script>
+    <script src="header.js"></script>
+</head>
+<body onload="checkAuth(); renderVault();">
+
+    <div class="app-container">
+        <h1>🗄️ Forensic Vault</h1>
+        
+        <div class="card" style="border-left-color: var(--text-green);">
+            <h2>Data Management</h2>
+            <div class="grid-2">
+                <button onclick="exportCSV()" style="font-size: 11px; padding: 15px;">📊 EXPORT CSV</button>
+                <button onclick="exportJSON()" style="font-size: 11px; padding: 15px;">💾 EXPORT JSON</button>
+            </div>
+            
+            <div style="margin-top: 15px; border-top: 1px solid #333; padding-top: 15px;">
+                <label style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:10px;">IMPORT MASTER BACKUP (.json)</label>
+                <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importJSON(event)">
+                <button onclick="document.getElementById('importFile').click()" style="width:100%; background:var(--accent-purple); color:var(--text-green); border:1px solid var(--text-green); padding:12px;">📥 IMPORT DATA</button>
+            </div>
+        </div>
+
+        <div class="card" style="border-left-color: var(--accent-purple);">
+            <h2>System Logs</h2>
+            <div id="logList" style="font-size:11px; color:var(--text-muted); overflow-y:auto; max-height:400px; line-height: 1.6;">
+            </div>
+        </div>
+
+        <button onclick="window.location.href='dashboard.html'" style="width:100%; padding: 20px; background: transparent; border: 1px solid #444; color: #888; border-radius: 12px; font-weight: bold; font-size: 18px; margin-top:10px; cursor: pointer;">🔙 BACK TO DASHBOARD</button>
+    </div>
+
+    <script>
+        function renderVault() {
+            try {
+                const vault = JSON.parse(localStorage.getItem('audherapy_db') || '[]');
+                const logList = document.getElementById('logList');
+                
+                if (!vault || vault.length === 0) {
+                    logList.innerHTML = "<div style='padding:20px; text-align:center;'>No forensic data detected.</div>";
+                    return;
+                }
+
+                // THE FIX: Automatically filters out corrupted/null rows that cause crashes
+                const validLogs = vault.filter(l => l && typeof l === 'object');
+                
+                if (validLogs.length === 0) {
+                    logList.innerHTML = "<div style='padding:20px; text-align:center;'>No valid data to display.</div>";
+                    return;
+                }
+
+                logList.innerHTML = validLogs.slice().reverse().map(l => {
+                    // THE FIX: Safely parses dates so "Invalid Date" errors don't break the loop
+                    let dateStr = "Unknown Date";
+                    if (l.timestamp) {
+                        const parsedDate = new Date(isNaN(l.timestamp) ? l.timestamp : Number(l.timestamp));
+                        dateStr = !isNaN(parsedDate.getTime()) ? parsedDate.toLocaleString() : l.timestamp;
+                    }
+
+                    return `
+                        <div style="padding: 8px 0; border-bottom: 1px solid #1a1a1a;">
+                            <span style="color: var(--text-green);">[${dateStr}]</span> 
+                            <b style="color: var(--morning-gold);">${l.category || 'System'}:</b> ${l.item || 'Log'} 
+                            ${l.note ? `<br><i style="color: var(--text-muted);">${l.note}</i>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                // Failsafe: if an error happens, it will show the exact error text inside the box instead of being blank
+                document.getElementById('logList').innerHTML = "<div style='color:#e74c3c; padding:10px;'>System Log Error: " + err.message + "</div>";
+            }
+        }
+
+        function exportCSV() {
+            const vault = JSON.parse(localStorage.getItem('audherapy_db') || '[]');
+            let csv = "Timestamp,Date,Category,Item,Value,Note\n";
+            vault.forEach(r => {
+                // THE FIX: Also protect the CSV builder from corrupted rows
+                if (!r || typeof r !== 'object') return;
+                let d = "Unknown Date";
+                if (r.timestamp) {
+                    const parsed = new Date(isNaN(r.timestamp) ? r.timestamp : Number(r.timestamp));
+                    d = !isNaN(parsed.getTime()) ? parsed.toLocaleString() : r.timestamp;
+                }
+                const safeNote = (r.note || '').toString().replace(/"/g, '""'); 
+                csv += `"${r.timestamp || ''}","${d}","${r.category || ''}","${r.item || ''}","${r.value || ''}","${safeNote}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `AuDherapy_CSV_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+        }
+
+        function exportJSON() {
+            const vault = JSON.parse(localStorage.getItem('audherapy_db') || '[]');
+            const config = JSON.parse(localStorage.getItem('audherapy_config') || '{}');
+            const data = { db: vault, config: config };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `AuDherapy_Master_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (importedData.db && importedData.config) {
+                        if (confirm("FORENSIC OVERWRITE: This will merge imported data with your current logs. Proceed?")) {
+                            const currentVault = JSON.parse(localStorage.getItem('audherapy_db') || '[]');
+                            const combinedDb = [...currentVault, ...importedData.db];
+                            const uniqueDb = Array.from(new Map(combinedDb.map(item => [item.timestamp, item])).values());
+                            
+                            localStorage.setItem('audherapy_db', JSON.stringify(uniqueDb));
+                            localStorage.setItem('audherapy_config', JSON.stringify(importedData.config));
+                            
+                            alert("Vault Re-Sync Complete!");
+                            renderVault();
+                        }
+                    } else {
+                        alert("ERROR: Invalid Forensic Data Format.");
+                    }
+                } catch (err) {
+                    alert("ERROR: Could not parse JSON file.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
