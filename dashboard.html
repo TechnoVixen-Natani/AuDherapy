@@ -74,13 +74,13 @@
         <div class="card">
             <h2 style="font-size: 36px; margin: 0 0 15px 0; line-height: 1.1;">System Control Hub</h2>
             <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button onclick="window.location.href='./modules/dailyfunction.html'" style="padding: 22px; background: #3b82f6; color: white; border: none; font-weight: bold; font-size: 20px; border-radius: 8px;">🔋 DAILY FUNCTION (Battery & Pain)</button>
-                <button onclick="window.location.href='./modules/meds.html'" style="padding: 22px; background: var(--morning-gold); color: #000; border: none; font-weight: bold;font-size: 20px; border-radius: 8px;">💊 MEDICATION LOG</button>
-                <button onclick="window.location.href='./modules/maintenance.html'" style="padding: 22px; background: var(--night-blue); color: #fff; border: none; font-weight: bold;font-size: 20px; border-radius: 8px;">💧 MAINTENANCE (64oz / Weight)</button>
-                <button onclick="window.location.href='./modules/state.html'" style="padding: 22px; background: var(--state-pink); color: #fff; border: none; font-weight: bold;font-size: 20px; border-radius: 8px;">⚡ SYSTEM STATE</button>
-                <button onclick="window.location.href='./modules/sensory.html'" style="padding: 22px; background: var(--accent-purple); color: var(--text-green); border: 1px solid var(--text-green); font-weight: bold;font-size: 20px; border-radius: 8px;">🧤 SENSORY LOG</button>
-                <button onclick="window.location.href='./modules/journal.html'" style="padding: 22px; background: #0d9488; color: #fff; border: none; font-weight: bold; font-size: 20px; border-radius: 8px; margin-top: 10px;">📓 EXTENDED JOURNAL</button>
-                <button onclick="window.location.href='./analytics.html'" style="padding: 22px; background: transparent; color: var(--morning-gold); border: 2px solid var(--morning-gold); font-weight: bold;font-size: 20px; border-radius: 8px; margin-top: 10px;">📊 FORENSIC TRENDS (Charts)</button>
+                <button onclick="window.location.href='modules/dailyfunction.html'" style="padding: 22px; background: #3b82f6; color: white; border: none; font-weight: bold; font-size: 20px; border-radius: 8px;">🔋 DAILY FUNCTION (Battery & Pain)</button>
+                <button onclick="window.location.href='modules/meds.html'" style="padding: 22px; background: var(--morning-gold); color: #000; border: none; font-weight: bold;font-size: 20px; border-radius: 8px;">💊 MEDICATION LOG</button>
+                <button onclick="window.location.href='modules/maintenance.html'" style="padding: 22px; background: var(--night-blue); color: #fff; border: none; font-weight: bold;font-size: 20px; border-radius: 8px;">💧 MAINTENANCE (64oz / Weight)</button>
+                <button onclick="window.location.href='modules/state.html'" style="padding: 22px; background: var(--state-pink); color: #fff; border: none; font-weight: bold;font-size: 20px; border-radius: 8px;">⚡ SYSTEM STATE</button>
+                <button onclick="window.location.href='modules/sensory.html'" style="padding: 22px; background: var(--accent-purple); color: var(--text-green); border: 1px solid var(--text-green); font-weight: bold;font-size: 20px; border-radius: 8px;">🧤 SENSORY LOG</button>
+                <button onclick="window.location.href='modules/journal.html'" style="padding: 22px; background: #0d9488; color: #fff; border: none; font-weight: bold; font-size: 20px; border-radius: 8px; margin-top: 10px;">📓 EXTENDED JOURNAL</button>
+                <button onclick="window.location.href='analytics.html'" style="padding: 22px; background: transparent; color: var(--morning-gold); border: 2px solid var(--morning-gold); font-weight: bold;font-size: 20px; border-radius: 8px; margin-top: 10px;">📊 FORENSIC TRENDS (Charts)</button>
             </div>
         </div>
 
@@ -108,7 +108,18 @@
             style="position:fixed; top:10px; left:10px; background:rgba(255,0,0,0.5); color:white; padding:10px; z-index:9999; border:none; border-radius:8px; font-size:10px;">
         ⚠️ NUKE LOCAL DATABASE
     </button>
-
+<div style="margin: 20px auto; padding: 20px; background: rgba(59, 130, 246, 0.1); border: 1px dashed #3b82f6; border-radius: 12px; text-align: center; max-width: 400px;">
+    <div style="font-size: 10px; color: #3b82f6; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: bold;">
+        System Update Available (v1.0 Stable)
+    </div>
+    <a href="app-release.apk" download 
+       style="display: block; background: #3b82f6; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">
+       📥 INSTALL NATIVE APK
+    </a>
+    <div style="margin-top: 10px; font-family: monospace; font-size: 9px; color: #555; word-break: break-all; line-height: 1.2;">
+        SHA-256: 9c62c936b598319b7d80f04321744931fed5207f82610317f7fc791856da7b48
+    </div>
+</div>
     <script>
         function checkAuth() {
             if (sessionStorage.getItem('aud_auth') !== 'true') window.location.href = 'index.html';
@@ -136,68 +147,6 @@
         'floating-chat.donateButton.background-color': '#5cb85c',
         'floating-chat.donateButton.text-color': '#fff'
       });
-      // 🎈 SENSORY-FRIENDLY BIRTHDAY CHECK
-function checkBirthday() {
-    const profileStr = localStorage.getItem('audherapy_profile');
-    if (!profileStr) return;
-
-    const profile = JSON.parse(profileStr);
-    if (!profile.birthday || !profile.name) return;
-
-    // Get today's exact date in MM-DD format
-    const today = new Date();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${mm}-${dd}`;
-
-    // If today matches their birthday
-    if (profile.birthday === todayStr) {
-        // Measure Twice: Check if we already celebrated today so we don't spam them
-        const lastCelebrated = localStorage.getItem('aud_last_bday_year');
-        const currentYear = today.getFullYear().toString();
-
-        if (lastCelebrated !== currentYear) {
-            showBirthdayBanner(profile.name);
-            // Mark it as celebrated for this year
-            localStorage.setItem('aud_last_bday_year', currentYear);
-        }
-    }
-}
-
-function showBirthdayBanner(name) {
-    const banner = document.createElement('div');
-    // Styling it to match your dark, low-light aesthetic but making it feel special
-    banner.style.position = 'fixed';
-    banner.style.top = '20px';
-    banner.style.left = '50%';
-    banner.style.transform = 'translateX(-50%)';
-    banner.style.background = '#111'; 
-    banner.style.color = '#FFD700'; // Golden text
-    banner.style.padding = '25px';
-    banner.style.borderRadius = '12px';
-    banner.style.border = '1px solid #FFD700';
-    banner.style.zIndex = '9999';
-    banner.style.textAlign = 'center';
-    banner.style.boxShadow = '0 4px 20px rgba(255, 215, 0, 0.15)';
-    banner.style.width = '85%';
-    banner.style.maxWidth = '400px';
-
-    banner.innerHTML = `
-        <h2 style="margin: 0 0 10px 0; font-size: 22px;">🎉 Happy Birthday, ${name}! 🎉</h2>
-        <p style="margin: 0 0 20px 0; font-size: 14px; color: #aaa; line-height: 1.4;">
-            We hope you have a wonderful and peaceful day today.
-        </p>
-        <button onclick="this.parentElement.remove()" 
-            style="background: #FFD700; color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;">
-            Thank You!
-        </button>
-    `;
-
-    document.body.appendChild(banner);
-}
-
-// Run the check as soon as the dashboard loads
-window.addEventListener('DOMContentLoaded', checkBirthday);
     </script>    
 </body>
 </html>
