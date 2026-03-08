@@ -102,24 +102,24 @@
             <button onclick="window.location.href='help.html'" class="nav-btn-secondary">❓ HELP</button> 
             <button onclick="window.location.href='contact.html'" class="nav-btn-secondary">📬 CONTACT</button>
         </div>
+        <div style="margin: 20px auto; padding: 20px; background: rgba(59, 130, 246, 0.1); border: 1px dashed #3b82f6; border-radius: 12px; text-align: center;">
+            <div style="font-size: 10px; color: #3b82f6; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: bold;">
+                System Update Available (v1.0 Stable)
+            </div>
+            <a href="AuDherapy.apk" download 
+               style="display: block; background: #3b82f6; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">
+               📥 INSTALL AuDherapy.apk
+            </a>
+            <div style="margin-top: 10px; font-family: monospace; font-size: 9px; color: #555; word-break: break-all; line-height: 1.2;">
+                SHA-256: 9c62c936b598319b7d80f04321744931fed5207f82610317f7fc791856da7b48
+            </div>
+        </div>
     </div>
 
     <button onclick="if(confirm('WIPE ALL DATA?')) { localStorage.removeItem('audherapy_db'); location.reload(); }" 
             style="position:fixed; top:10px; left:10px; background:rgba(255,0,0,0.5); color:white; padding:10px; z-index:9999; border:none; border-radius:8px; font-size:10px;">
         ⚠️ NUKE LOCAL DATABASE
-    </button>
-<div style="margin: 20px auto; padding: 20px; background: rgba(59, 130, 246, 0.1); border: 1px dashed #3b82f6; border-radius: 12px; text-align: center; max-width: 400px;">
-    <div style="font-size: 10px; color: #3b82f6; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: bold;">
-        System Update Available (v1.0 Stable)
-    </div>
-    <a href="app-release.apk" download 
-       style="display: block; background: #3b82f6; color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">
-       📥 INSTALL NATIVE APK
-    </a>
-    <div style="margin-top: 10px; font-family: monospace; font-size: 9px; color: #555; word-break: break-all; line-height: 1.2;">
-        SHA-256: 9c62c936b598319b7d80f04321744931fed5207f82610317f7fc791856da7b48
-    </div>
-</div>
+    </button>    
     <script>
         function checkAuth() {
             if (sessionStorage.getItem('aud_auth') !== 'true') window.location.href = 'index.html';
