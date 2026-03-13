@@ -41,7 +41,7 @@ Security Bypass: Enter the Master PIN at the forensic gate.
 
 Native Install: Navigate to the Dashboard and tap "INSTALL AuDherapy.apk" to move the app to your native environment.
 
-## 🧩 The App Icon
+## 🐾🐾 The App Icon 🐾🐾
 🎨 The AuDherapy Identity
 "The infinity loop represents the diverse ways our brains work, and the pup represents the sensory-focused, honest approach I use to navigate the world. Together, they show that my app is built on both universal neurodivergent principles and my own personal 'sensory superpower' protocols.
 
